@@ -193,12 +193,28 @@ export default function Overview({
             <option value="sessions">Sessions</option>
             <option value="chapters">Chapters</option>
           </select>
-          <section className="d-flex flex-col gap-1">
+          <section className="d-flex flex-col shadow-l">
+            {dataTable == 'sessions' ? (
+              <div className="header-block d-flex justify-content-between gap-1 flex-wrap align-items-center">
+                <p>Date</p>
+                <p>Words written</p>
+                <p>Avg. WPM</p>
+                <p>Duration</p>
+                <p>
+                  <span className="v-hidden material-icon">expand_more</span>
+                </p>
+              </div>
+            ) : (
+              <div className="header-block d-flex justify-content-between gap-1 flex-wrap align-items-center">
+                <p>Date</p>
+                <p>Chapters</p>
+              </div>
+            )}
             {Object.entries(sessions).map(([dayKey, daySessions]) => (
               <div key={dayKey} className={styles.sessionContainer}>
                 {dataTable == 'sessions' ? (
                   <button
-                    className={`${styles.dayBlock} d-flex justify-content-between gap-1 day-block flex-wrap border-0 w-fill  align-items-center`}
+                    className={`${styles.dayBlock} d-flex justify-content-between gap-1 day-block flex-wrap border-0 w-fill align-items-center`}
                     onClick={() => toggleCollapse(dayKey)}
                   >
                     <p>
@@ -227,7 +243,7 @@ export default function Overview({
 
                     <p>
                       <span className="material-icon">
-                        {collapsedDays[dayKey] !== undefined ? 'expand_less' : 'expand_more'}
+                        {(collapsedDays[dayKey] ?? true) ? 'expand_more' : 'expand_less'}
                       </span>
                     </p>
                   </button>

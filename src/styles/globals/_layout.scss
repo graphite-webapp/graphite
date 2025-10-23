@@ -63,14 +63,37 @@ main {
   }
 }
 
+.header-block,
 .day-block {
   padding: 0.5em 1em;
   font-size: var(--text-size);
-  font-weight: var(--bold-weight-text);
   color: var(--bg);
-  background-color: var(--primary);
+  font-family: inherit;
 
-  &:nth-of-type(even) {
-    background-color: var(--primary-dark);
+  p {
+    flex: 1;
+    text-align: left;
+
+    &:last-of-type {
+      flex: unset;
+      text-align: right;
+    }
+  }
+}
+
+.header-block {
+  background-color: var(--primary);
+  font-size: var(--h6-size);
+  font-weight: var(--bold-weight-text);
+}
+
+.day-block {
+  color: var(--text);
+  background-color: var(--bg-light);
+
+  &:hover {
+    cursor: pointer;
+    background-color: var(--bg);
+    box-shadow: var(--shadow-l);
   }
 }

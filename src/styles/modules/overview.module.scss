@@ -28,5 +28,9 @@
 }
 
 .sessionContainer:nth-of-type(even) .dayBlock {
-  background-color: var(--primary-light);
+  background-color: var(--bg-dark);
+
+  &:hover {
+    background-color: var(--bg);
+  }
 }

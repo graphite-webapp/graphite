@@ -1,0 +1,5 @@
+@use '../variables' as *;
+
+.shadow-l {
+  box-shadow: var(--shadow-l);
+}
