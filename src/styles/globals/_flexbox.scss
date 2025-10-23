@@ -1,0 +1,38 @@
+@use '../variables' as *;
+
+.d-flex {
+  display: flex;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-center {
+  justify-content: center;
+  align-items: center;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.justify-content-end {
+  justify-content: end;
+}
+
+.justify-content-around {
+  justify-content: space-around;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.flex-grow-1 {
+  flex-grow: 1;
+}

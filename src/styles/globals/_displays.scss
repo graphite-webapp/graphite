@@ -1,0 +1,29 @@
+@use '../variables' as *;
+
+.v-hidden {
+  visibility: hidden;
+}
+
+.collapsed {
+  display: none;
+}
+
+.d-none {
+  display: none;
+}
+
+.gap-2 {
+  gap: 2em;
+}
+
+.gap-1 {
+  gap: 1em;
+}
+
+.gap-05 {
+  gap: 0.5em;
+}
+
+.gap-025 {
+  gap: 0.5em;
+}

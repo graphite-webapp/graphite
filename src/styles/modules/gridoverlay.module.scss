@@ -1,0 +1,53 @@
+@use '../variables' as *;
+
+.grid {
+  box-sizing: border-box;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  // left: 50%;
+  // transform: translate(-50%);
+  height: 100vh;
+  z-index: 100;
+  gap: 1em;
+  margin: 0 auto;
+
+  width: 100%;
+  max-width: var(--sm);
+  padding: 0 1em;
+
+  @media only screen and (min-width: $md) {
+    max-width: var(--md);
+    padding: 0 4em;
+  }
+
+  @media only screen and (min-width: $lg) {
+    max-width: var(--lg);
+  }
+
+  @media only screen and (min-width: $xl) {
+    max-width: var(--xl);
+  }
+
+  .grid_item {
+    flex-grow: 1;
+    background-color: red;
+    opacity: 0.15;
+
+    &[data-col='md'],
+    &[data-col='sm'] {
+      display: none;
+    }
+    @media only screen and (min-width: $md) {
+      &[data-col='sm'] {
+        display: block;
+      }
+    }
+
+    @media only screen and (min-width: $lg) {
+      &[data-col='md'] {
+        display: block;
+      }
+    }
+  }
+}

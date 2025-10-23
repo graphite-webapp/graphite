@@ -1,0 +1,32 @@
+.form_row {
+  padding: 0;
+
+  td {
+    padding: 0;
+
+    input {
+      border: none;
+    }
+
+    .btn_submit {
+      width: 100%;
+    }
+  }
+}
+
+.form_row,
+.edit_cell {
+  input {
+    background: transparent;
+    border-color: var(--bg);
+    font-size: inherit;
+  }
+}
+
+.edit_cell {
+  padding: 0;
+}
+
+.sessionContainer:nth-of-type(even) .dayBlock {
+  background-color: var(--primary-light);
+}

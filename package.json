@@ -1,0 +1,40 @@
+{
+  "name": "writing-stats",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build --turbopack",
+    "start": "next start",
+    "lint": "eslint",
+    "format": "prettier . --write",
+    "format-lint": "prettier . --write && eslint --fix"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.75.0",
+    "next": "15.5.4",
+    "papaparse": "^5.5.3",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "recharts": "^3.2.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^20",
+    "@types/papaparse": "^5.3.16",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.4",
+    "prettier": "^3.6.2",
+    "sass": "^1.93.2",
+    "supabase": "^2.48.3",
+    "typescript": "^5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leo-kramer/writing-stats-google-sheets.git"
+  },
+  "author": "Leo Kramer",
+  "license": "GPL-3.0 license"
+}

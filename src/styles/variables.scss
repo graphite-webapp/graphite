@@ -1,0 +1,97 @@
+$xxl: 87.5em;
+$xl: 75em;
+$lg: 62em;
+$md: 48em;
+$sm: 36em;
+$xs: 22em;
+
+:root {
+  --xxl: #{$xxl};
+  --xl: #{$xl};
+  --lg: #{$lg};
+  --md: #{$md};
+  --sm: #{$sm};
+  --xs: #{$xs};
+
+  // BASE COLOURS
+  // Color codes
+  --primary-hs: 248, 43%;
+  --primary-l: 21%;
+  --secondary-hs: 31, 43%;
+  --secondary-l: 21%;
+  --accent-hs: 33, 70%;
+  --accent-l: 73%;
+  --bg-hs: 31, 30%;
+  --bg-l: 83%;
+  --text-hs: 36, 12%;
+  --text-l: 10%;
+
+  // Calculated colors
+  --primary: hsl(var(--primary-hs), calc(var(--primary-l) - 0%));
+  --primary-dark: hsl(var(--primary-hs), calc(var(--primary-l) - 5%));
+  --primary-light: hsl(var(--primary-hs), calc(var(--primary-l) + 5%));
+  --secondary: hsl(var(--secondary-hs), calc(var(--secondary-l) - 0%));
+  --secondary-dark: hsl(var(--secondary-hs), calc(var(--secondary-l) - 5%));
+  --accent: hsl(var(--accent-hs), calc(var(--accent-l) - 0%));
+  --bg: hsl(var(--bg-hs), calc(var(--bg-l) - 0%));
+  --bg-dark: hsl(var(--bg-hs), calc(var(--bg-l) - 5%));
+  --bg-light: hsl(var(--bg-hs), calc(var(--bg-l) + 5%));
+  --text: hsl(var(--text-hs), calc(var(--text-l) - 0%));
+  --text-muted: hsl(var(--text-hs), calc(var(--text-l) + 20%));
+
+  // GRADIENTS
+  --primary-secondary: linear-gradient(to right, var(--primary), var(--secondary));
+  --loading-bg: hsla(var(--text-hs), calc(var(--text-l) - 0%), 50%);
+  --loading-highlight: hsla(var(--text-hs), calc(var(--text-l) - 0%), 45%);
+  --loading: linear-gradient(
+    -90deg,
+    var(--loading-bg) 0%,
+    var(--loading-bg) 44%,
+    var(--loading-highlight) 48%,
+    var(--loading-highlight) 51%,
+    var(--loading-bg) 55%,
+    var(--loading-bg) 100%
+  );
+
+  // SHADOWS
+  --shadow-s:
+    0px 2px 4px hsla(var(--text-hs), var(--text-l), 20%),
+    0px 4px 8px hsla(var(--text-hs), var(--text-l), 10%);
+  --shadow-m:
+    0px 4px 8px hsla(var(--text-hs), var(--text-l), 20%),
+    0px 8px 10px hsla(var(--text-hs), var(--text-l), 10%);
+  --shadow-l:
+    0px 8px 10px hsla(var(--text-hs), var(--text-l), 20%),
+    0px 10px 12px hsla(var(--text-hs), var(--text-l), 10%);
+
+  // FONT SETTINGS
+  --family-heading: var(--font-fredoka), system-ui, sans-serif;
+  --heading-letter-spacing: 0px;
+  --family-text: var(--font-montserrat), system-ui, sans-serif;
+  --regular-weight-text: 400;
+  --bold-weight-text: 700;
+  --text-letter-spacing: 0px;
+
+  // FONT SIZES
+  --type-scale: 1.2;
+  --text-size: 1.125rem;
+  --small-text-size: calc(var(--text-size) / var(--type-scale));
+  --tiny-text-size: calc(var(--small-text-size) / var(--type-scale));
+  --h6-size: calc(var(--text-size) * var(--type-scale));
+  --h5-size: calc(var(--h6-size) * var(--type-scale));
+  --h4-size: calc(var(--h5-size) * var(--type-scale));
+  --h3-size: calc(var(--h4-size) * var(--type-scale));
+  --h2-size: calc(var(--h3-size) * var(--type-scale));
+  --h1-size: calc(var(--h2-size) * var(--type-scale));
+
+  --icon-size: 32px;
+
+  // LAYOUT DEFAULTS
+  --border-radius: 5px;
+}
+
+// @media (prefers-color-scheme: dark) {
+//   :root {
+
+// }
+// }

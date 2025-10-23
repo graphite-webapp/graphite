@@ -1,0 +1,13 @@
+@use '../variables' as *;
+
+.d-grid {
+  display: grid;
+}
+
+.grid-columns-1-1 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.d-grid p:nth-of-type(odd) {
+  font-weight: var(--bold-weight-text);
+}

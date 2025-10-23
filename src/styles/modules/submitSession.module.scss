@@ -1,0 +1,21 @@
+@use '../variables' as *;
+
+.grid {
+  display: flex;
+  flex-direction: column;
+
+  input {
+    margin-bottom: 0.5em;
+  }
+
+  @media only screen and (min-width: $md) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5em;
+    align-items: center;
+
+    input {
+      margin-bottom: 0;
+    }
+  }
+}

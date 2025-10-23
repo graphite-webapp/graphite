@@ -1,0 +1,37 @@
+@use '../variables' as *;
+
+.btn {
+  border-radius: var(--border-radius);
+  border: none;
+  padding: 0.5em 1em;
+  font-size: inherit;
+  font-weight: inherit;
+  font-family: inherit;
+  letter-spacing: inherit;
+  color: var(--bg);
+  transition: 200ms ease-in-out;
+  box-shadow: var(--shadow-s);
+
+  &:hover {
+    cursor: pointer;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-l);
+  }
+}
+
+.btn-primary {
+  font-weight: var(--bold-weight-text);
+  background-color: var(--primary);
+
+  &:hover {
+    background-color: var(--primary-dark);
+  }
+}
+
+.btn-secondary {
+  background-color: var(--secondary);
+
+  &:hover {
+    background-color: var(--secondary-dark);
+  }
+}

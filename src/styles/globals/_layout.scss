@@ -1,0 +1,76 @@
+@use '../variables' as *;
+
+@media (prefers-color-scheme: light) {
+  html {
+    color-scheme: light;
+  }
+}
+
+body {
+  color: var(--text);
+  background: var(--bg-dark);
+  font-family: var(--family-text);
+  font-size: var(--text-size);
+  letter-spacing: var(--text-letter-spacing);
+  font-weight: var(--regular-weight-text);
+  padding: 0;
+  margin: 0;
+}
+
+main {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--sm);
+  padding: 0 1em;
+  margin-top: 2em;
+  margin-bottom: 4em;
+
+  @media only screen and (min-width: $md) {
+    max-width: var(--md);
+    padding: 0 4em;
+  }
+
+  @media only screen and (min-width: $lg) {
+    max-width: var(--lg);
+    margin-top: 0em;
+  }
+
+  @media only screen and (min-width: $xl) {
+    max-width: var(--xl);
+  }
+}
+
+.info-blocks-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1em;
+
+  @media only screen and (max-width: $lg) {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.info-block {
+  box-sizing: border-box;
+  padding: 2em;
+  background-color: var(--bg);
+  box-shadow: var(--shadow-s);
+  border-radius: var(--border-radius);
+
+  @media only screen and (max-width: $md) {
+    padding: 1em;
+  }
+}
+
+.day-block {
+  padding: 0.5em 1em;
+  font-size: var(--text-size);
+  font-weight: var(--bold-weight-text);
+  color: var(--bg);
+  background-color: var(--primary);
+
+  &:nth-of-type(even) {
+    background-color: var(--primary-dark);
+  }
+}

@@ -1,0 +1,20 @@
+@use '../variables' as *;
+
+.container {
+  gap: 1em;
+  display: flex;
+  flex-direction: column;
+
+  @media only screen and (min-width: $lg) {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+
+    > section:last-of-type {
+      grid-column: 6 / 13;
+    }
+
+    > section:first-of-type {
+      grid-column: 1 / 6;
+    }
+  }
+}

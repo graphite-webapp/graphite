@@ -1,0 +1,71 @@
+@use '../variables' as *;
+
+.navbar {
+  position: sticky;
+  top: 0;
+  background-color: var(--bg);
+  width: 100vw;
+  z-index: 1;
+  margin-bottom: 2em;
+  box-shadow: var(--shadow-m);
+
+  @media only screen and (max-width: $lg) {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    margin: 0;
+  }
+}
+
+.nav {
+  width: 100%;
+  max-width: var(--xs);
+
+  @media only screen and (min-width: $md) {
+    max-width: var(--md);
+  }
+
+  @media only screen and (min-width: $lg) {
+    max-width: var(--lg);
+  }
+
+  @media only screen and (min-width: $xl) {
+    max-width: var(--xl);
+  }
+}
+
+.ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 1em 0;
+}
+
+.link {
+  font-weight: bold;
+  padding: 0.5em 1em;
+  border-radius: var(--border-radius);
+  transition: 200ms ease-in-out;
+  color: var(--text-muted);
+
+  .text {
+    display: none;
+
+    @media only screen and (min-width: $md) {
+      display: inline;
+    }
+  }
+
+  .icon {
+    display: inline;
+
+    @media only screen and (min-width: $md) {
+      display: none;
+    }
+  }
+}
+
+.link:hover,
+.active {
+  background-color: var(--bg-light);
+  color: var(--text);
+}

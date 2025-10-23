@@ -1,0 +1,56 @@
+@use '../variables' as *;
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--family-heading);
+  margin: 0;
+  margin-bottom: 0.25em;
+  letter-spacing: var(--heading-letter-spacing);
+  font-weight: 600;
+  color: var(--secondary);
+  text-align: center;
+}
+
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: var(--h1-size);
+}
+
+h2 {
+  font-size: var(--h2-size);
+}
+
+h3 {
+  font-size: var(--h3-size);
+}
+
+h4 {
+  font-size: var(--h4-size);
+}
+
+h5 {
+  font-size: var(--h5-size);
+}
+
+h6 {
+  font-size: var(--h6-size);
+}
+
+.small-text {
+  font-size: var(--small-text-size);
+}
+
+.tiny-text {
+  font-size: var(--tiny-text-size);
+}
+
+.bold {
+  font-weight: var(--bold-weight-text);
+}

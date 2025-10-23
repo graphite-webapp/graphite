@@ -1,0 +1,28 @@
+@use '../variables' as *;
+
+select {
+  background-color: var(--bg-light);
+  padding: 0.25em 0.5em;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--bg-dark);
+  font-family: inherit;
+  font-size: inherit;
+}
+
+input {
+  background-color: var(--bg-light);
+  border: 2px solid var(--bg-dark);
+  border-radius: var(--border-radius);
+  font-family: inherit;
+  padding: 0.5em 0.5em;
+
+  &:focus {
+    outline: 1px solid var(--primary) !important;
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 10px var(--primary);
+  }
+}
+
+label {
+  font-weight: var(--bold-weight-text);
+}
