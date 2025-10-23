@@ -193,96 +193,98 @@ export default function Overview({
             <option value="sessions">Sessions</option>
             <option value="chapters">Chapters</option>
           </select>
-          <section className="d-flex flex-col shadow-l">
-            {dataTable == 'sessions' ? (
-              <div className="header-block d-flex justify-content-between gap-1 flex-wrap align-items-center">
-                <p>Date</p>
-                <p>Words written</p>
-                <p>Avg. WPM</p>
-                <p>Duration</p>
-                <p>
-                  <span className="v-hidden material-icon">expand_more</span>
-                </p>
-              </div>
-            ) : (
-              <div className="header-block d-flex justify-content-between gap-1 flex-wrap align-items-center">
-                <p>Date</p>
-                <p>Chapters</p>
-              </div>
-            )}
-            {Object.entries(sessions).map(([dayKey, daySessions]) => (
-              <div key={dayKey} className={styles.sessionContainer}>
-                {dataTable == 'sessions' ? (
-                  <button
-                    className={`${styles.dayBlock} d-flex justify-content-between gap-1 day-block flex-wrap border-0 w-fill align-items-center`}
-                    onClick={() => toggleCollapse(dayKey)}
-                  >
-                    <p>
-                      {new Date(dayKey).toLocaleDateString(undefined, {
-                        weekday: 'short',
-                        month: 'short',
-                        day: 'numeric',
-                      })}
-                    </p>
+          <section className="d-flex flex-col shadow-l overflow-x-scroll">
+            <div className="min-w-max-content">
+              {dataTable == 'sessions' ? (
+                <div className="header-block d-flex justify-content-between gap-1 align-items-center">
+                  <p>Date</p>
+                  <p>Words written</p>
+                  <p>Avg. WPM</p>
+                  <p>Duration</p>
+                  <p>
+                    <span className="v-hidden material-icon">expand_more</span>
+                  </p>
+                </div>
+              ) : (
+                <div className="header-block d-flex justify-content-between gap-1 flex-wrap align-items-center">
+                  <p>Date</p>
+                  <p>Chapters</p>
+                </div>
+              )}
+              {Object.entries(sessions).map(([dayKey, daySessions]) => (
+                <div key={dayKey} className={styles.sessionContainer}>
+                  {dataTable == 'sessions' ? (
+                    <button
+                      className={`${styles.dayBlock} d-flex justify-content-between gap-1 w-fill day-block border-0 align-items-center`}
+                      onClick={() => toggleCollapse(dayKey)}
+                    >
+                      <p>
+                        {new Date(dayKey).toLocaleDateString(undefined, {
+                          weekday: 'short',
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </p>
 
-                    <p>
-                      {daySessions
-                        .reduce((sum, session) => sum + (session.words_written as number), 0)
-                        .toLocaleString()}{' '}
-                      words
-                    </p>
-                    <p>
-                      {Math.round(
-                        daySessions.reduce((sum, session) => sum + (session.wpm as number), 0) /
-                          daySessions.length
-                      ).toLocaleString()}{' '}
-                      WPM
-                    </p>
+                      <p>
+                        {daySessions
+                          .reduce((sum, session) => sum + (session.words_written as number), 0)
+                          .toLocaleString()}{' '}
+                        words
+                      </p>
+                      <p>
+                        {Math.round(
+                          daySessions.reduce((sum, session) => sum + (session.wpm as number), 0) /
+                            daySessions.length
+                        ).toLocaleString()}{' '}
+                        WPM
+                      </p>
 
-                    <p>{sumDurations(daySessions.map(s => s.session_duration as string))}</p>
+                      <p>{sumDurations(daySessions.map(s => s.session_duration as string))}</p>
 
-                    <p>
-                      <span className="material-icon">
-                        {(collapsedDays[dayKey] ?? true) ? 'expand_more' : 'expand_less'}
-                      </span>
-                    </p>
-                  </button>
-                ) : (
-                  <button
-                    className={`${styles.dayBlock} d-flex justify-content-between gap-1 day-block flex-wrap border-0 w-fill  align-items-center`}
-                    onClick={() => toggleCollapse(dayKey)}
-                  >
-                    <p>
-                      {new Date(dayKey).toLocaleDateString(undefined, {
-                        weekday: 'short',
-                        month: 'short',
-                        day: 'numeric',
-                      })}
-                    </p>
+                      <p>
+                        <span className="material-icon">
+                          {(collapsedDays[dayKey] ?? true) ? 'expand_more' : 'expand_less'}
+                        </span>
+                      </p>
+                    </button>
+                  ) : (
+                    <button
+                      className={`${styles.dayBlock} d-flex justify-content-between gap-1 day-block flex-wrap border-0 w-fill  align-items-center`}
+                      onClick={() => toggleCollapse(dayKey)}
+                    >
+                      <p>
+                        {new Date(dayKey).toLocaleDateString(undefined, {
+                          weekday: 'short',
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </p>
 
-                    <p>
-                      {daySessions
-                        .reduce((sum, session) => sum + (session.chapter_completed as number), 0)
-                        .toLocaleString()}
-                      {daySessions
-                        .reduce((sum, session) => sum + (session.chapter_completed as number), 0)
-                        .toLocaleString() > 1
-                        ? ' chapters'
-                        : ' chapter'}
-                    </p>
-                  </button>
-                )}
+                      <p>
+                        {daySessions
+                          .reduce((sum, session) => sum + (session.chapter_completed as number), 0)
+                          .toLocaleString()}
+                        {daySessions
+                          .reduce((sum, session) => sum + (session.chapter_completed as number), 0)
+                          .toLocaleString() > 1
+                          ? ' chapters'
+                          : ' chapter'}
+                      </p>
+                    </button>
+                  )}
 
-                {dataTable == 'sessions' ? (
-                  <OverviewDetails
-                    collapsed={collapsedDays[dayKey] ?? true}
-                    dataTable={dataTable}
-                    headers={headers}
-                    sessions={daySessions}
-                  />
-                ) : null}
-              </div>
-            ))}{' '}
+                  {dataTable == 'sessions' ? (
+                    <OverviewDetails
+                      collapsed={collapsedDays[dayKey] ?? true}
+                      dataTable={dataTable}
+                      headers={headers}
+                      sessions={daySessions}
+                    />
+                  ) : null}
+                </div>
+              ))}
+            </div>
           </section>
         </>
       ) : (
