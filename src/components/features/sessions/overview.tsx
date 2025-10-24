@@ -215,7 +215,7 @@ export default function Overview({
                 <div key={dayKey} className={styles.sessionContainer}>
                   {dataTable == 'sessions' ? (
                     <button
-                      className={`${styles.dayBlock} d-flex justify-content-between gap-1 w-fill day-block border-0 align-items-center`}
+                      className={`${styles.dayBlock} ${styles.containsDetails} contains-details d-flex justify-content-between gap-1 w-fill day-block border-0 align-items-center`}
                       onClick={() => toggleCollapse(dayKey)}
                     >
                       <p>

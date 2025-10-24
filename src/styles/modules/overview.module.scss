@@ -30,7 +30,7 @@
 .sessionContainer:nth-of-type(even) .dayBlock {
   background-color: var(--bg-dark);
 
-  &:hover {
+  &.containsDetails:hover {
     background-color: var(--bg);
   }
 }

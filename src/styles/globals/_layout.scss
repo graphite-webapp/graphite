@@ -91,7 +91,7 @@ main {
   color: var(--text);
   background-color: var(--bg-light);
 
-  &:hover {
+  &.contains-details:hover {
     cursor: pointer;
     background-color: var(--bg);
     box-shadow: var(--shadow-l);

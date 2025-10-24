@@ -113,7 +113,9 @@ export default function OverviewDetails({ collapsed, dataTable, headers, session
               }
               return <td key={header}>{formattedHeader}</td>;
             })}
-            <td>Options</td>
+            <td className="more-icon">
+              <span className="material-icon inline-icon">more_vert</span>
+            </td>
           </tr>
         </thead>
         <tbody>
