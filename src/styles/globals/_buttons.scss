@@ -35,3 +35,24 @@
     background-color: var(--secondary-dark);
   }
 }
+
+.btn-tertiary-error {
+  border: 3px solid var(--error);
+
+  border-color: var(--error);
+  background-color: hsla(0, 100%, 50%, 20%);
+  color: var(--text);
+
+  &:hover {
+    background-color: var(--error-dark);
+    color: var(--bg);
+  }
+}
+
+.btn-error {
+  background-color: var(--error);
+
+  &:hover {
+    background-color: var(--error-dark);
+  }
+}

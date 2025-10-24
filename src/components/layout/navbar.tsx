@@ -38,11 +38,11 @@ export default function NavBar() {
           </li>
           <li>
             <Link
-              className={`${styles.link} ${active?.startsWith('/settings') ? styles.active : ''} has-icon d-flex flex-center`}
-              href="/settings"
+              className={`${styles.link} ${active?.startsWith('/profile') ? styles.active : ''} has-icon d-flex flex-center`}
+              href="/profile"
             >
-              <span className={styles.text}>Settings</span>
-              <span className={`${styles.icon} material-icon`}>settings</span>
+              <span className={styles.text}>Profile</span>
+              <span className={`${styles.icon} material-icon`}>Profile</span>
             </Link>
           </li>
         </ul>

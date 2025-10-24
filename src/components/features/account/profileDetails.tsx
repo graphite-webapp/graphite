@@ -96,11 +96,11 @@ export default function Profile({ goals: initialGoals }: ProfileProps) {
 
       <hr />
 
-      <button className="btn btn-secondary">Change password</button>
-      <button className="btn btn-secondary" onClick={handleSignOut}>
+      <button className="btn btn-error">Change password</button>
+      <button className="btn btn-tertiary-error" onClick={handleSignOut}>
         Log out
       </button>
-      <button className="btn btn-secondary">Delete account</button>
+      <button className="btn btn-tertiary-error">Delete account</button>
     </section>
   );
 }

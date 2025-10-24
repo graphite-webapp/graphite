@@ -70,7 +70,9 @@ export default function Option({
           <p className="bold">{!loading ? label : ''}</p>
           <p>{!loading ? value : ''}</p>
         </div>
-        <button className={`${loading ? 'v-hidden' : ''} btn btn-primary`}>Edit</button>
+        <button className={`${loading ? 'v-hidden' : ''} btn btn-primary d-flex flex-center`}>
+          <span className="material-icon inline-icon">edit</span>
+        </button>
       </div>
     );
   }

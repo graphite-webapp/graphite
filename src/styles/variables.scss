@@ -13,7 +13,7 @@ $xs: 22em;
   --sm: #{$sm};
   --xs: #{$xs};
 
-  // BASE COLOURS
+  // BASE COLORS
   // Color codes
   --primary-hs: 248, 43%;
   --primary-l: 21%;
@@ -38,6 +38,19 @@ $xs: 22em;
   --bg-light: hsl(var(--bg-hs), calc(var(--bg-l) + 5%));
   --text: hsl(var(--text-hs), calc(var(--text-l) - 0%));
   --text-muted: hsl(var(--text-hs), calc(var(--text-l) + 20%));
+
+  // STATE COLORS
+  // Color codes
+  --warning-hs: 20, 67%;
+  --warning-l: 44%;
+  --error-hs: 4, 79%;
+  --error-l: 26%;
+
+  // Calculated colors
+  --warning: hsl(var(--warning-hs), calc(var(--warning-l) - 0%));
+  --warning-dark: hsl(var(--warning-hs), calc(var(--warning-l) - 5%));
+  --error: hsl(var(--error-hs), calc(var(--error-l) - 0%));
+  --error-dark: hsl(var(--error-hs), calc(var(--error-l) - 5%));
 
   // GRADIENTS
   --primary-secondary: linear-gradient(to right, var(--primary), var(--secondary));
