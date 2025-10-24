@@ -42,7 +42,7 @@ export default function NavBar() {
               href="/profile"
             >
               <span className={styles.text}>Profile</span>
-              <span className={`${styles.icon} material-icon`}>Profile</span>
+              <span className={`${styles.icon} material-icon`}>settings</span>
             </Link>
           </li>
         </ul>
