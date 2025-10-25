@@ -20,14 +20,16 @@ export default function Overview({
   showControlMenu = false,
 }: OverviewProps) {
   const { currentUser, loading: userLoading } = useUser();
+
   const [dataTable, setDataTable] = useState<'sessions' | 'chapters'>(() => {
     const saved = localStorage.getItem('dataTable');
     if (saved === 'sessions' || saved === 'chapters') return saved;
     return 'sessions';
   });
+
   const [collapsedDays, setCollapsedDays] = useState<Record<string, boolean>>(() => {
     const saved = localStorage.getItem('collapsedDays');
-    return saved ? JSON.parse(saved) : {};
+    return saved !== null ? JSON.parse(saved) : {};
   });
 
   const date = new Date();
@@ -59,19 +61,23 @@ export default function Overview({
   }
 
   const headers = Object.keys(sessions[groupsKeys[0]][0]);
-  headers.splice(headers.indexOf('id'), 1);
-  headers.splice(headers.indexOf('date'), 1);
-  headers.splice(headers.indexOf('user_id'), 1);
-  headers.splice(headers.indexOf('created_at'), 1);
-  headers.splice(headers.indexOf('updated_at'), 1);
-  if (dataTable == 'sessions') {
-    headers.splice(headers.indexOf('start_count'), 1);
-    headers.splice(headers.indexOf('end_count'), 1);
-    headers.splice(headers.indexOf('start_time'), 1);
-    headers.splice(headers.indexOf('end_time'), 1);
+  const removeKeys = ['id', 'date', 'user_id', 'created_at', 'updated_at'];
+  const unshiftKeys: string[] = [];
 
-    headers.unshift('count');
-    headers.unshift('time');
+  if (dataTable == 'sessions') {
+    unshiftKeys.push('count', 'time');
+    removeKeys.push('start_count', 'end_count', 'start_time', 'end_time');
+  }
+
+  removeKeys.forEach(k => {
+    const i = headers.indexOf(k);
+    if (i !== -1) headers.splice(i, 1);
+  });
+
+  if (unshiftKeys.length > 0) {
+    unshiftKeys.forEach(k => {
+      headers.unshift(k);
+    });
   }
 
   const toggleCollapse = (dayKey: string) => {
@@ -79,7 +85,6 @@ export default function Overview({
       const isCollapsed = prev[dayKey] ?? true;
       const updated = { ...prev, [dayKey]: !isCollapsed };
       localStorage.setItem('collapsedDays', JSON.stringify(updated));
-      console.log(updated);
       return updated;
     });
   };
@@ -101,6 +106,7 @@ export default function Overview({
             <option value="sessions">Sessions</option>
             <option value="chapters">Chapters</option>
           </select>
+
           <section className="d-flex flex-col shadow-l overflow-x-scroll">
             <div className="min-w-max-content">
               {dataTable == 'sessions' ? (
@@ -121,7 +127,9 @@ export default function Overview({
               )}
               {Object.entries(sessions).map(([dayKey, daySessions]) => (
                 <div key={dayKey} className={styles.sessionContainer}>
-                  {dataTable == 'sessions' ? (
+                  {dataTable == 'sessions' &&
+                  Array.isArray(daySessions) &&
+                  daySessions.length > 0 ? (
                     <button
                       className={`${styles.dayBlock} ${styles.containsDetails} ${!collapsedDays[dayKey] ? styles.detailsShown : ''} contains-details d-flex justify-content-between gap-1 w-fill day-block border-0 align-items-center`}
                       onClick={() => toggleCollapse(dayKey)}
@@ -136,19 +144,29 @@ export default function Overview({
 
                       <p>
                         {daySessions
-                          .reduce((sum, session) => sum + (session.words_written as number), 0)
+                          .reduce(
+                            (sum: number, session: DataRow) =>
+                              sum + Number(session.words_written ?? 0),
+                            0
+                          )
                           .toLocaleString()}{' '}
                         words
                       </p>
                       <p>
                         {Math.round(
-                          daySessions.reduce((sum, session) => sum + (session.wpm as number), 0) /
-                            daySessions.length
+                          daySessions.reduce(
+                            (sum: number, session: DataRow) => sum + Number(session.wpm ?? 0),
+                            0
+                          ) / daySessions.length
                         ).toLocaleString()}{' '}
                         WPM
                       </p>
 
-                      <p>{sumDurations(daySessions.map(s => s.session_duration as string))}</p>
+                      <p>
+                        {sumDurations(
+                          daySessions.map((session: DataRow) => session.session_duration as string)
+                        )}
+                      </p>
 
                       <p>
                         <span className="material-icon">
@@ -171,11 +189,17 @@ export default function Overview({
 
                       <p>
                         {daySessions
-                          .reduce((sum, session) => sum + (session.chapter_completed as number), 0)
+                          .reduce(
+                            (sum: number, session: DataRow) =>
+                              sum + Number(session.chapter_completed ?? 0),
+                            0
+                          )
                           .toLocaleString()}
-                        {daySessions
-                          .reduce((sum, session) => sum + (session.chapter_completed as number), 0)
-                          .toLocaleString() > 1
+                        {daySessions.reduce(
+                          (sum: number, session: DataRow) =>
+                            sum + Number(session.chapter_completed ?? 0),
+                          0
+                        ) > 1
                           ? ' chapters'
                           : ' chapter'}
                       </p>
@@ -204,190 +228,4 @@ export default function Overview({
       )}
     </section>
   );
-
-  // return (
-  //   <section className="info-block">
-  //     <h3>{dataTable == 'sessions' ? 'Writing sessions' : 'Chapter sessions'}</h3>
-  //     {!dataLoading ? (
-  //       <>
-  //         <select
-  //           className={showControlMenu ? 'd-flex' : 'd-none'}
-  //           value={dataTable}
-  //           onChange={e => {
-  //             const value = e.target.value as 'sessions' | 'chapters';
-  //             setDataTable(value);
-  //             localStorage.setItem('dataTable', value);
-  //           }}
-  //         >
-  //           <option value="sessions">Sessions</option>
-  //           <option value="chapters">Chapters</option>
-  //         </select>
-  //         <form className={`${styles.form} d-flex`} onSubmit={insertRow}>
-  //           <table cellSpacing="0">
-  //             <thead>
-  //               <tr>
-  //                 {headers.map(header => {
-  //                   const withSpaces = header.replace(/(_)/g, ' ');
-
-  //                   let formattedHeader =
-  //                     withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1).toLowerCase();
-
-  //                   if (header == 'wpm') {
-  //                     formattedHeader = 'WPM';
-  //                   }
-  //                   return <td key={header}>{formattedHeader}</td>;
-  //                 })}
-  //                 <td>Options</td>
-  //               </tr>
-  //             </thead>
-  //             <tbody>
-  //               {sessions.map(session => {
-  //                 const isEditing = editingRowId === session.id;
-
-  //                 return (
-  //                   <tr key={session.id} data-id={session.id}>
-  //                     {headers.map(header => {
-  //                       const value = session[header as keyof typeof session];
-  //                       const headerTitle = header.toLowerCase();
-  //                       let displayValue = value;
-  //                       if (headerTitle.includes('date')) {
-  //                         displayValue = new Date(value as string).toLocaleDateString();
-  //                       }
-
-  //                       if (
-  //                         headerTitle.includes('start_time') ||
-  //                         headerTitle.includes('end_time') ||
-  //                         headerTitle.includes('session_duration')
-  //                       ) {
-  //                         const [hours, minutes] = (value as string).split(':');
-  //                         const dateObj = new Date();
-  //                         dateObj.setHours(Number(hours), Number(minutes));
-  //                         displayValue = dateObj.toLocaleTimeString([], {
-  //                           hour: '2-digit',
-  //                           minute: '2-digit',
-  //                         });
-  //                       }
-
-  //                       if (headerTitle == 'chapter') {
-  //                         displayValue = (value as string[]).join(', ');
-  //                       }
-
-  //                       if (
-  //                         isEditing &&
-  //                         [
-  //                           'date',
-  //                           'start_time',
-  //                           'end_time',
-  //                           'start_count',
-  //                           'end_count',
-  //                           'chapter',
-  //                           'chapter_completed',
-  //                         ].includes(header)
-  //                       ) {
-  //                         let type = 'text';
-  //                         if (header.includes('date')) {
-  //                           type = 'date';
-  //                           displayValue = new Date(value as string).toISOString().split('T')[0];
-  //                         }
-
-  //                         if (header.includes('time')) {
-  //                           type = 'time';
-  //                         }
-
-  //                         if (header.includes('count') || header == 'chapter_completed') {
-  //                           type = 'number';
-  //                         }
-
-  //                         return (
-  //                           <td key={header} className={styles.edit_cell}>
-  //                             <input
-  //                               id={`${header.replace(/(_)/g, '-')}-${session.id}`}
-  //                               type={type}
-  //                               defaultValue={displayValue as string}
-  //                             ></input>
-  //                           </td>
-  //                         );
-  //                       }
-
-  //                       return <td key={header}>{(displayValue as string).toLocaleString()}</td>;
-  //                     })}
-  //                     <td className="d-flex gap-05">
-  //                       <button
-  //                         onClick={isEditing ? submitEdit : editRow}
-  //                         type="button"
-  //                         className="btn btn-primary"
-  //                       >
-  //                         {isEditing ? 'Submit' : 'Edit'}
-  //                       </button>
-  //                       <button
-  //                         onClick={isEditing ? cancelEdit : deleteRow}
-  //                         type="button"
-  //                         className="btn btn-secondary"
-  //                       >
-  //                         {isEditing ? 'Cancel' : 'Delete'}
-  //                       </button>
-  //                     </td>
-  //                   </tr>
-  //                 );
-  //               })}
-  //               <tr className={styles.form_row}>
-  //                 {headers.map(header => {
-  //                   const withSpaces = header.replace(/(_)/g, ' ');
-  //                   const formattedHeader =
-  //                     withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1).toLowerCase();
-  //                   let type = 'text';
-
-  //                   if (
-  //                     ![
-  //                       'date',
-  //                       'start_time',
-  //                       'end_time',
-  //                       'start_count',
-  //                       'end_count',
-  //                       'chapter',
-  //                       'chapter_completed',
-  //                     ].includes(header)
-  //                   ) {
-  //                     return <td key={header}></td>;
-  //                   }
-
-  //                   if (header.includes('date')) {
-  //                     type = 'date';
-  //                   }
-
-  //                   if (header.includes('time')) {
-  //                     type = 'time';
-  //                   }
-
-  //                   if (header.includes('count') || header == 'chapter_completed') {
-  //                     type = 'number';
-  //                   }
-
-  //                   return (
-  //                     <td key={header}>
-  //                       <input
-  //                         placeholder={formattedHeader}
-  //                         id={header.replace(/(_)/g, '-')}
-  //                         type={type}
-  //                       ></input>
-  //                     </td>
-  //                   );
-  //                 })}
-  //                 <td>
-  //                   <button className={`btn btn-primary ${styles.btn_submit}`} type="submit">
-  //                     Submit session
-  //                   </button>
-  //                 </td>
-  //               </tr>
-  //             </tbody>
-  //           </table>
-  //         </form>
-  //       </>
-  //     ) : (
-  //       <div className="d-flex flex-center mt-2">
-  //         <Spinner />
-  //       </div>
-  //     )}
-  //   </section>
-  // );
 }

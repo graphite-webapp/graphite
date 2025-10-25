@@ -25,7 +25,7 @@ export default function LogIn() {
     if (success) {
       router.push('/');
     } else {
-      setErrorMsg(error?.message || 'Login failed. Please try again.');
+      setErrorMsg(error?.message ?? 'Login failed. Please try again.');
     }
   };
 

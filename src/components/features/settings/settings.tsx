@@ -10,6 +10,7 @@ export default function Settings() {
         options={['System default', 'Light', 'Dark']}
         classNames={[]}
         value={''}
+        loading={false}
       />
 
       <h5>App settings</h5>
@@ -19,6 +20,7 @@ export default function Settings() {
         options={['per session', 'per day']}
         classNames={[]}
         value={''}
+        loading={false}
       />
       <Option
         label="Import data"
@@ -26,6 +28,7 @@ export default function Settings() {
         options={[]}
         classNames={['btn-secondary']}
         value={''}
+        loading={false}
       />
       <Option
         label="Export data"
@@ -33,6 +36,7 @@ export default function Settings() {
         options={[]}
         classNames={['btn-secondary']}
         value={''}
+        loading={false}
       />
     </section>
   );

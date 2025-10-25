@@ -55,7 +55,10 @@ export default function Option({
           className="d-none"
           type="file"
           accept=".csv"
-          onChange={e => submitFileUpload(e, currentUser?.id)}
+          onChange={e => {
+            if (currentUser !== null && currentUser?.id !== null)
+              submitFileUpload(e, currentUser.id);
+          }}
         />
       </div>
     );

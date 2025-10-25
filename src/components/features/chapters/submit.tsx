@@ -6,6 +6,7 @@ export default function SubmitChapter() {
 
   const addChapter = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (!currentUser || !currentUser?.id) return;
 
     const chapterData = {
       user_id: currentUser?.id,
@@ -19,6 +20,7 @@ export default function SubmitChapter() {
 
   const removeChapter = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (!currentUser || !currentUser?.id) return;
 
     const chapterData = {
       user_id: currentUser?.id,

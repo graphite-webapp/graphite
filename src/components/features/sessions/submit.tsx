@@ -18,7 +18,7 @@ export default function SubmitSession() {
     );
 
   const insertRow = async (e: React.FormEvent<HTMLFormElement>) => {
-    if (!currentUser || !currentUser?.id) return;
+    if (!currentUser?.id) return;
     e.preventDefault();
     const form = e.currentTarget;
     await handleSubmit({

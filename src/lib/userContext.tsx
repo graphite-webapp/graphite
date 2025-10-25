@@ -17,6 +17,14 @@ type UserContextType = {
     data?: { user: User | null; session: Session | null };
   }>;
   signOutUser: () => Promise<void>;
+  signInUser: (
+    email: string,
+    password: string
+  ) => Promise<{
+    success: boolean;
+    error?: AuthError;
+    data?: { user: User | null; session: Session | null };
+  }>;
 };
 
 type UserProviderProps = {

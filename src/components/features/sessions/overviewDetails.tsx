@@ -1,11 +1,24 @@
 import React from 'react';
 import { useState, useRef } from 'react';
-import { handleSubmit } from '@/types/submitData';
+import { handleSubmit, submitValue } from '@/types/submitData';
 import { useUser } from '@/lib/userContext';
 import Submenu from '@/components/ui/submenu';
 import styles from '@/styles/modules/overviewDetails.module.scss';
+import { BaseRow, TableName } from '@/types/db';
 
-export default function OverviewDetails({ collapsed, dataTable, headers, sessions }: any) {
+type OverviewDetailsProps = {
+  collapsed: boolean;
+  dataTable: TableName;
+  headers: string[];
+  sessions: BaseRow[];
+};
+
+export default function OverviewDetails({
+  collapsed,
+  dataTable,
+  headers,
+  sessions,
+}: OverviewDetailsProps) {
   const { currentUser, loading: userLoading } = useUser();
   const [editingRowId, setEditingRowId] = useState<number | boolean>(false);
   const [activeSubmenuId, setActiveSubmenuId] = useState<number | null>(null);
@@ -16,10 +29,11 @@ export default function OverviewDetails({ collapsed, dataTable, headers, session
   };
 
   const insertRow = async (e: React.FormEvent<HTMLFormElement>) => {
+    if (!currentUser || userLoading) return;
     e.preventDefault();
     const form = e.currentTarget;
 
-    let editValues = [
+    let editValues: submitValue[] = [
       { key: 'date', id: '#date', type: 'text' },
       { key: 'start_time', id: '#start-time', type: 'text' },
       { key: 'end_time', id: '#end-time', type: 'text' },
@@ -52,17 +66,19 @@ export default function OverviewDetails({ collapsed, dataTable, headers, session
   const cancelEdit = () => setEditingRowId(false);
 
   const submitEdit = async (sessionId: number) => {
+    if (!currentUser || userLoading) return;
+
     const row = document.querySelector(`div[data-id='${sessionId}']`) as HTMLDivElement;
 
-    let editValues = [
+    let editValues: submitValue[] = [
       { key: 'date', id: `#date-${sessionId}`, type: 'text' },
       { key: 'start_time', id: `#start-time-${sessionId}`, type: 'text' },
       { key: 'end_time', id: `#end-time-${sessionId}`, type: 'text' },
       { key: 'start_count', id: `#start-count-${sessionId}`, type: 'text' },
       { key: 'end_count', id: `#end-count-${sessionId}`, type: 'text' },
-      { key: 'words_written', id: sessionId, type: 'number' },
-      { key: 'session_duration', id: sessionId, type: 'text' },
-      { key: 'wpm', id: sessionId, type: 'number' },
+      { key: 'words_written', id: sessionId.toString(), type: 'number' },
+      { key: 'session_duration', id: sessionId.toString(), type: 'text' },
+      { key: 'wpm', id: sessionId.toString(), type: 'number' },
       { key: 'chapter', id: `#chapter-${sessionId}`, type: 'array' },
     ];
 
@@ -86,6 +102,8 @@ export default function OverviewDetails({ collapsed, dataTable, headers, session
   };
 
   const deleteRow = async (sessionId: number) => {
+    if (!currentUser || userLoading) return;
+
     await handleSubmit({
       userId: currentUser.id,
       submitType: 'delete',
@@ -140,7 +158,11 @@ export default function OverviewDetails({ collapsed, dataTable, headers, session
                             id={`date-${session.id}`}
                             className={styles.input}
                             type="date"
-                            defaultValue={new Date(session['date']).toISOString().split('T')[0]}
+                            defaultValue={
+                              typeof session['date'] === 'string'
+                                ? new Date(session['date']).toISOString().split('T')[0]
+                                : ''
+                            }
                           />
                         </div>
                       </div>
@@ -193,7 +215,7 @@ export default function OverviewDetails({ collapsed, dataTable, headers, session
                     }
 
                     if (headerTitle.includes('count')) {
-                      displayValue = `${session.start_count.toLocaleString()} - ${session.end_count.toLocaleString()}`;
+                      displayValue = `${(session.start_count as number).toLocaleString()} - ${(session.end_count as number).toLocaleString()}`;
                     }
 
                     if (headerTitle == 'chapter') {
@@ -226,11 +248,11 @@ export default function OverviewDetails({ collapsed, dataTable, headers, session
                       }
 
                       if (headerTitle.includes('count') || headerTitle.includes('time')) {
-                        const startVal = displayValue
+                        const startVal = (displayValue as string)
                           .split(' - ')[0]
                           .replace(',', '')
                           .replace('.', '');
-                        const endVal = displayValue
+                        const endVal = (displayValue as string)
                           .split(' - ')[1]
                           .replace(',', '')
                           .replace('.', '');
@@ -281,7 +303,7 @@ export default function OverviewDetails({ collapsed, dataTable, headers, session
                     <button
                       className="no-button"
                       type="button"
-                      onClick={() => toggleSubmenu(session.id)}
+                      onClick={() => toggleSubmenu(Number(session.id))}
                       ref={el => {
                         toggleButtonRefs.current[Number(session.id)] = el;
                       }}
@@ -298,12 +320,15 @@ export default function OverviewDetails({ collapsed, dataTable, headers, session
                           text: !isEditing ? 'Edit session' : 'Submit edit',
                           icon: !isEditing ? 'edit' : 'check_circle',
                           onClick: () =>
-                            !isEditing ? editRow(session.id) : submitEdit(session.id),
+                            !isEditing
+                              ? editRow(Number(session.id))
+                              : submitEdit(Number(session.id)),
                         },
                         {
                           text: !isEditing ? 'Delete session' : 'Cancel edit',
                           icon: !isEditing ? 'delete' : 'cancel',
-                          onClick: () => (!isEditing ? deleteRow(session.id) : cancelEdit()),
+                          onClick: () =>
+                            !isEditing ? deleteRow(Number(session.id)) : cancelEdit(),
                         },
                       ]}
                     />

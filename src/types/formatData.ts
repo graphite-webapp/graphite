@@ -6,7 +6,7 @@ export type DataRow = {
 export function aggregateData<T extends DataRow>(
   data: T[],
   valueKey: keyof T,
-  aggregateBy?: 'month' | 'day' = 'month'
+  aggregateBy: 'month' | 'day' = 'month'
 ): T[] {
   const aggregated: Record<string, T> = {};
 
@@ -39,25 +39,24 @@ export function aggregateData<T extends DataRow>(
   return Object.values(aggregated);
 }
 
-export function groupData<T extends DataRow>(data: T[], groupBy: keyof T): T[] {
-  const grouped: Record<string, T> = {};
+export function groupData<T extends DataRow>(data: T[], groupBy: keyof T): Record<string, T[]> {
+  const grouped: Record<string, T[]> = {};
 
   data.forEach(session => {
     const key = String(session[groupBy]);
-    if (!grouped[key]) grouped[key] = [];
+    if (grouped[key] == undefined) grouped[key] = [];
     grouped[key].push(session);
   });
 
-  let ordered = grouped;
-
   if (groupBy == 'date' || groupBy == 'created_at') {
-    ordered = Object.keys(grouped)
-      .sort((a, b) => new Date(b) - new Date(a))
-      .reduce((obj: Record<string, T[]>, key) => {
-        obj[key] = grouped[key];
-        return obj;
-      }, {});
+    const ordered: Record<string, T[]> = {};
+    Object.keys(grouped)
+      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
+      .forEach(key => {
+        ordered[key] = grouped[key];
+      });
+    return ordered;
   }
 
-  return ordered;
+  return grouped;
 }

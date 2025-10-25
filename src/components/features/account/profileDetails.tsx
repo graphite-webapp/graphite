@@ -51,14 +51,6 @@ export default function Profile({ goals: initialGoals }: ProfileProps) {
         {!dataLoading ? `Member since ${createdAt?.toLocaleDateString()}` : ''}
       </p>
       <Option
-        label="Email"
-        type="edit"
-        value={!dataLoading ? currentUser.email : ''}
-        options={[]}
-        loading={dataLoading}
-        classNames={[]}
-      />
-      <Option
         label="Bio"
         type="edit"
         value={'Nothing yet'}
@@ -66,8 +58,16 @@ export default function Profile({ goals: initialGoals }: ProfileProps) {
         loading={dataLoading}
         classNames={[]}
       />
+      <Option
+        label="Email"
+        type="edit"
+        value={!dataLoading ? currentUser.email : ''}
+        options={[]}
+        loading={dataLoading}
+        classNames={[]}
+      />
 
-      <hr />
+      <h3 className="mb-0 text-left">Goals</h3>
 
       <Option
         label="Goal type"

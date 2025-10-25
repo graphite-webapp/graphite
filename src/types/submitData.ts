@@ -2,7 +2,7 @@ import { upsertData } from '@/types/upsertData';
 import { deleteData } from '@/types/deleteData';
 import { TableName } from './db';
 
-type submitValue = {
+export type submitValue = {
   key: string;
   id: string;
   type: 'number' | 'array' | 'text';
