@@ -1,0 +1,9 @@
+@use '../variables' as *;
+
+.container {
+  display: flex;
+
+  @media only screen and (max-width: $lg) {
+    display: none;
+  }
+}

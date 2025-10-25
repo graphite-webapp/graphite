@@ -7,9 +7,8 @@ import Profile from '@/components/features/account/profileDetails';
 import ProfileDetails from '@/components/features/account/profile';
 import Settings from '@/components/features/settings/settings';
 import Spinner from '@/components/ui/spinner';
-import styles from '@/styles/modules/profile.module.scss';
 
-export default function ProfileSettings() {
+export default function PageSettings() {
   const { currentUser, loading: userLoading } = useUser();
 
   useEffect(() => {
@@ -29,15 +28,8 @@ export default function ProfileSettings() {
     );
 
   return (
-    <main className={`${styles.container} d-flex gap-1`}>
-      <section className="d-flex flex-col gap-1">
-        {/* <Profile goals={data.goals ?? []} /> */}
-        <ProfileDetails goals={data.goals ?? []} includeSettings={true} />
-      </section>
-
-      <section className="d-flex flex-col gap-1">
-        <Settings source={'profile'} />
-      </section>
+    <main className={`d-flex gap-1`}>
+      <Settings source={'settings'} />
     </main>
   );
 }

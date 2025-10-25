@@ -1,0 +1,18 @@
+@use '../variables' as *;
+
+.title {
+  padding: 0.25em 0.5em;
+  background-color: var(--bg-dark);
+  border-radius: var(--border-radius);
+  transition: 200ms ease-in-out;
+
+  &:hover {
+    cursor: pointer;
+    background-color: var(--bg);
+    box-shadow: var(--shadow-s);
+  }
+}
+
+.container {
+  padding: 0 0.5em;
+}

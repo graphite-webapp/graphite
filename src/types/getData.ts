@@ -6,6 +6,7 @@ export type FetchDataResult = {
   sessions?: BaseRow[];
   chapters?: BaseRow[];
   goals?: BaseRow[];
+  profiles?: BaseRow[];
 };
 
 export async function getData(
@@ -18,7 +19,7 @@ export async function getData(
     .from(table)
     .select()
     .eq('user_id', userId)
-    .order(table !== 'goals' ? 'date' : 'created_at', { ascending: true });
+    .order(table !== 'goals' && table !== 'profiles' ? 'date' : 'created_at', { ascending: true });
 
   if (error || data == null) {
     console.error('There was a problem signing up.', error);
@@ -68,6 +69,11 @@ export async function collectData(
   if (tables.includes('goals')) {
     const goalData = await getData('goals', userId);
     if (goalData.success) result.goals = goalData.data;
+  }
+
+  if (tables.includes('profiles')) {
+    const profileData = await getData('profiles', userId);
+    if (profileData.success) result.profiles = profileData.data;
   }
 
   return result;

@@ -60,6 +60,9 @@ h6 {
 .bold {
   font-weight: var(--bold-weight-text);
 }
+.regular {
+  font-weight: var(--regular-weight-text);
+}
 
 .text-left {
   text-align: left;
@@ -67,4 +70,8 @@ h6 {
 
 .text-center {
   text-align: center;
+}
+
+.underline {
+  text-decoration: underline;
 }

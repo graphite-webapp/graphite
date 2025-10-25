@@ -1,0 +1,17 @@
+@use '../variables' as *;
+
+.option {
+  padding: 0.25em 0.5em;
+  background-color: var(--bg-dark);
+  transition: 200ms ease-in-out;
+  box-shadow: var(--shadow-s);
+
+  &:hover {
+    box-shadow: var(--shadow-m);
+    background-color: var(--bg);
+  }
+}
+
+.btn {
+  width: max-content;
+}
