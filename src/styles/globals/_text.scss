@@ -12,6 +12,12 @@ h6 {
   letter-spacing: var(--heading-letter-spacing);
   font-weight: 600;
   color: var(--secondary);
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3 {
   text-align: center;
 }
 
@@ -53,4 +59,12 @@ h6 {
 
 .bold {
   font-weight: var(--bold-weight-text);
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
 }

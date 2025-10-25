@@ -56,3 +56,21 @@
     background-color: var(--error-dark);
   }
 }
+
+.no-button {
+  color: inherit;
+  background-color: transparent;
+  border: none;
+  border-radius: 50%;
+  padding: 0.5em;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  transition: 200ms ease-in-out;
+
+  &:hover {
+    cursor: pointer;
+
+    background-color: var(--bg);
+  }
+}

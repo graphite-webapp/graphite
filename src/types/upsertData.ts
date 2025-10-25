@@ -8,14 +8,17 @@ export type data = {
 
 const tableConstraints = {
   sessions: ['date', 'start_time', 'end_time'],
-  chapters: [],
+  chapters: ['date'],
   goals: [],
 };
 
-export async function upsertData(table: TableName, data: data[]) {
+export async function upsertData(table: TableName, data: data[], isImport: boolean = false) {
   if (!data[0]?.user_id) return;
 
-  const constraintCols = tableConstraints[table];
+  let constraintCols = [];
+  if (isImport) {
+    constraintCols = tableConstraints[table];
+  }
   const { error } = await supabase.from(table).upsert(
     data.map(row => ({
       ...row,

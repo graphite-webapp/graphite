@@ -1,0 +1,39 @@
+@use '../variables' as *;
+
+.container {
+  position: relative;
+  display: inline-block;
+
+  .menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: var(--bg);
+    box-shadow: var(--shadow-s);
+    border-radius: var(--border-radius);
+    min-width: 12.5rem;
+    display: none;
+
+    &.active {
+      display: flex;
+    }
+
+    .menuBtn {
+      background-color: transparent;
+      border: none;
+      color: inherit;
+      font-size: inherit;
+      text-align: right;
+      padding: 0.5em 1em;
+      box-shadow: none;
+      cursor: pointer;
+      justify-content: end;
+
+      &:hover {
+        transform: none;
+        font-weight: var(--bold-weight-text);
+        background-color: var(--bg-dark);
+      }
+    }
+  }
+}

@@ -1,8 +1,19 @@
-import styles from '@/styles/modules/overview.module.scss';
-import { useState } from 'react';
+import React from 'react';
+import { useState, useRef } from 'react';
+import { handleSubmit } from '@/types/submitData';
+import { useUser } from '@/lib/userContext';
+import Submenu from '@/components/ui/submenu';
+import styles from '@/styles/modules/overviewDetails.module.scss';
 
-export default function OverviewDetails({ collapsed, dataTable, headers, sessions }) {
+export default function OverviewDetails({ collapsed, dataTable, headers, sessions }: any) {
+  const { currentUser, loading: userLoading } = useUser();
   const [editingRowId, setEditingRowId] = useState<number | boolean>(false);
+  const [activeSubmenuId, setActiveSubmenuId] = useState<number | null>(null);
+  const toggleButtonRefs = useRef<Record<number, HTMLButtonElement | null>>({});
+
+  const toggleSubmenu = (id: number) => {
+    setActiveSubmenuId(prev => (prev === id ? null : id));
+  };
 
   const insertRow = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,19 +48,11 @@ export default function OverviewDetails({ collapsed, dataTable, headers, session
     });
   };
 
-  const editRow = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const row = e.currentTarget.closest('tr') as HTMLTableRowElement;
-    const sessionId = row.dataset.id!;
-    setEditingRowId(Number(sessionId));
-  };
+  const editRow = (sessionId: number) => setEditingRowId(sessionId);
+  const cancelEdit = () => setEditingRowId(false);
 
-  const cancelEdit = () => {
-    setEditingRowId(false);
-  };
-
-  const submitEdit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    const row = e.currentTarget.closest('tr') as HTMLTableRowElement;
-    const sessionId = row.dataset.id!;
+  const submitEdit = async (sessionId: number) => {
+    const row = document.querySelector(`div[data-id='${sessionId}']`) as HTMLDivElement;
 
     let editValues = [
       { key: 'date', id: `#date-${sessionId}`, type: 'text' },
@@ -82,10 +85,7 @@ export default function OverviewDetails({ collapsed, dataTable, headers, session
     setEditingRowId(false);
   };
 
-  const deleteRow = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    const row = e.currentTarget.closest('tr') as HTMLTableRowElement;
-    const sessionId = row.dataset.id!;
-
+  const deleteRow = async (sessionId: number) => {
     await handleSubmit({
       userId: currentUser.id,
       submitType: 'delete',
@@ -99,157 +99,221 @@ export default function OverviewDetails({ collapsed, dataTable, headers, session
       className={`${collapsed ? 'collapsed' : 'show d-flex'} ${styles.form}`}
       onSubmit={insertRow}
     >
-      <table cellSpacing="0">
-        <thead>
-          <tr>
+      <div className={styles.table}>
+        <div className={styles.thead}>
+          <div className={styles.tr}>
+            {typeof editingRowId === 'number' ? <div className={styles.td}>Date</div> : null}
             {headers.map(header => {
               const withSpaces = (header as string).replace(/(_)/g, ' ');
-
               let formattedHeader =
                 withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1).toLowerCase();
 
               if (header == 'wpm') {
                 formattedHeader = 'WPM';
               }
-              return <td key={header}>{formattedHeader}</td>;
+
+              return (
+                <div className={styles.td} key={header}>
+                  {formattedHeader}
+                </div>
+              );
             })}
-            <td className="more-icon">
-              <span className="material-icon inline-icon">more_vert</span>
-            </td>
-          </tr>
-        </thead>
-        <tbody>
+            <div className={styles.td}>Actions</div>
+          </div>
+        </div>
+        <div className={styles.tbody}>
           {sessions.map(session => {
             const isEditing = editingRowId === session.id;
 
             return (
-              <tr key={session.id} data-id={session.id}>
-                {headers.map(header => {
-                  const value = session[header as keyof typeof session];
-                  const headerTitle = (header as string).toLowerCase();
-                  const withSpaces = (header as string).replace(/(_)/g, ' ');
-                  let formattedHeader =
-                    withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1).toLowerCase();
+              <div className={styles.trBg} key={session.id}>
+                <div className={styles.tr} data-id={session.id}>
+                  {isEditing ? (
+                    <React.Fragment>
+                      <div className={`${styles.td} ${styles.valueLabel}`}>Date</div>
+                      <div
+                        className={`${styles.td} ${styles.edit_cell} d-flex align-items-center`}
+                        data-label="date"
+                      >
+                        <div className="d-flex align-items-center">
+                          <input
+                            id={`date-${session.id}`}
+                            className={styles.input}
+                            type="date"
+                            defaultValue={new Date(session['date']).toISOString().split('T')[0]}
+                          />
+                        </div>
+                      </div>
+                    </React.Fragment>
+                  ) : null}
+                  {headers.map(header => {
+                    const value = session[header as keyof typeof session];
+                    let displayValue = value;
+                    const headerTitle = (header as string).toLowerCase();
+                    const withSpaces = (header as string).replace(/(_)/g, ' ');
+                    let formattedHeader =
+                      withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1).toLowerCase();
 
-                  if (header == 'wpm') {
-                    formattedHeader = 'WPM';
-                  }
-                  let displayValue = value;
-
-                  if (headerTitle.includes('date')) {
-                    displayValue = new Date(value as string).toLocaleDateString();
-                  }
-
-                  if (headerTitle.includes('session_duration')) {
-                    const [hours, minutes] = (value as string).split(':');
-                    const dateObj = new Date();
-                    dateObj.setHours(Number(hours), Number(minutes));
-                    displayValue = dateObj.toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    });
-                  }
-
-                  if (headerTitle.includes('time')) {
-                    const [startHours, startMinutes] = (session.start_time as string).split(':');
-                    const startDateObj = new Date();
-                    startDateObj.setHours(Number(startHours), Number(startMinutes));
-                    const startTime = startDateObj.toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    });
-
-                    const [endHours, endMinutes] = (session.end_time as string).split(':');
-                    const endDateObj = new Date();
-                    endDateObj.setHours(Number(endHours), Number(endMinutes));
-                    const endTime = endDateObj.toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    });
-
-                    displayValue = `${startTime} - ${endTime}`;
-                  }
-
-                  if (headerTitle.includes('count')) {
-                    displayValue = `${session.start_count.toLocaleString()} - ${session.end_count.toLocaleString()}`;
-                  }
-
-                  if (headerTitle == 'chapter') {
-                    displayValue = (value as string[]).join(', ');
-                  }
-
-                  if (
-                    isEditing &&
-                    [
-                      'date',
-                      'start_time',
-                      'end_time',
-                      'start_count',
-                      'end_count',
-                      'chapter',
-                      'chapter_completed',
-                    ].includes(header)
-                  ) {
-                    let type = 'text';
-                    if (header.includes('date')) {
-                      type = 'date';
-                      displayValue = new Date(value as string).toISOString().split('T')[0];
+                    if (header == 'wpm') {
+                      formattedHeader = 'WPM';
                     }
 
-                    if (header.includes('time')) {
-                      type = 'time';
+                    if (headerTitle.includes('date')) {
+                      displayValue = new Date(value as string).toLocaleDateString();
                     }
 
-                    if (header.includes('count') || header == 'chapter_completed') {
-                      type = 'number';
+                    if (headerTitle.includes('session_duration')) {
+                      const [hours, minutes] = (value as string).split(':');
+                      const dateObj = new Date();
+                      dateObj.setHours(Number(hours), Number(minutes));
+                      displayValue = dateObj.toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      });
+                    }
+
+                    if (headerTitle.includes('time')) {
+                      const [startHours, startMinutes] = (session.start_time as string).split(':');
+                      const startDateObj = new Date();
+                      startDateObj.setHours(Number(startHours), Number(startMinutes));
+                      const startTime = startDateObj.toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      });
+
+                      const [endHours, endMinutes] = (session.end_time as string).split(':');
+                      const endDateObj = new Date();
+                      endDateObj.setHours(Number(endHours), Number(endMinutes));
+                      const endTime = endDateObj.toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      });
+
+                      displayValue = `${startTime} - ${endTime}`;
+                    }
+
+                    if (headerTitle.includes('count')) {
+                      displayValue = `${session.start_count.toLocaleString()} - ${session.end_count.toLocaleString()}`;
+                    }
+
+                    if (headerTitle == 'chapter') {
+                      displayValue = (value as string[]).join(', ');
+                    }
+
+                    if (
+                      isEditing &&
+                      ['time', 'count', 'chapter', 'chapter_completed'].includes(header)
+                    ) {
+                      const headerTitle = (header as string).toLowerCase();
+                      let type = 'text';
+                      let output: React.ReactNode = (
+                        <div className="d-flex align-items-center">
+                          <input
+                            id={`${header.replace(/(_)/g, '-')}-${session.id}`}
+                            className={styles.input}
+                            type={type}
+                            defaultValue={displayValue as string}
+                          />
+                        </div>
+                      );
+
+                      if (headerTitle.includes('time')) {
+                        type = 'time';
+                      }
+
+                      if (headerTitle.includes('count') || headerTitle == 'chapter_completed') {
+                        type = 'number';
+                      }
+
+                      if (headerTitle.includes('count') || headerTitle.includes('time')) {
+                        const startVal = displayValue
+                          .split(' - ')[0]
+                          .replace(',', '')
+                          .replace('.', '');
+                        const endVal = displayValue
+                          .split(' - ')[1]
+                          .replace(',', '')
+                          .replace('.', '');
+                        output = (
+                          <div className="d-flex align-items-center gap-05">
+                            <input
+                              id={`start-${header.replace(/(_)/g, '-')}-${session.id}`}
+                              className={styles.input}
+                              type={type}
+                              defaultValue={startVal as string}
+                            />
+                            <p>-</p>
+                            <input
+                              id={`end-${header.replace(/(_)/g, '-')}-${session.id}`}
+                              className={styles.input}
+                              type={type}
+                              defaultValue={endVal as string}
+                            />
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <React.Fragment key={header}>
+                          <div className={`${styles.td} ${styles.valueLabel}`}>
+                            {formattedHeader}
+                          </div>
+                          <div
+                            className={`${styles.td} ${styles.edit_cell} d-flex align-items-center`}
+                            data-label={formattedHeader}
+                          >
+                            {output}
+                          </div>
+                        </React.Fragment>
+                      );
                     }
 
                     return (
-                      <td key={header} className={styles.edit_cell} data-label={formattedHeader}>
-                        <input
-                          id={`${header.replace(/(_)/g, '-')}-${session.id}`}
-                          type={type}
-                          defaultValue={displayValue as string}
-                        ></input>
-                      </td>
+                      <React.Fragment key={header}>
+                        <div className={`${styles.td} ${styles.valueLabel}`}>{formattedHeader}</div>
+                        <div className={`${styles.td} ${styles.value}`}>
+                          {(displayValue as string).toLocaleString()}
+                        </div>
+                      </React.Fragment>
                     );
-                  }
-
-                  return (
-                    <td key={header} data-label={formattedHeader}>
-                      {(displayValue as string).toLocaleString()}
-                    </td>
-                  );
-                })}
-                <td className="d-flex gap-05">
-                  <button
-                    onClick={isEditing ? submitEdit : editRow}
-                    type="button"
-                    className="has-icon btn btn-primary d-flex flex-center"
-                  >
-                    {isEditing ? (
-                      <span className="material-icon inline-icon">check_circle</span>
-                    ) : (
-                      <span className="material-icon inline-icon">edit</span>
-                    )}
-                  </button>
-                  <button
-                    onClick={isEditing ? cancelEdit : deleteRow}
-                    type="button"
-                    className="has-icon btn btn-secondary d-flex flex-center"
-                  >
-                    {isEditing ? (
-                      <span className="material-icon inline-icon">cancel</span>
-                    ) : (
-                      <span className="material-icon inline-icon">delete</span>
-                    )}
-                  </button>
-                </td>
-              </tr>
+                  })}
+                  <div className={`${styles.td} ${styles.actions}`}>
+                    <button
+                      className="no-button"
+                      type="button"
+                      onClick={() => toggleSubmenu(session.id)}
+                      ref={el => {
+                        toggleButtonRefs.current[Number(session.id)] = el;
+                      }}
+                    >
+                      {' '}
+                      <span className="material-icon inline-icon">more_horiz</span>
+                    </button>
+                    <Submenu
+                      triggerEl={toggleButtonRefs.current[Number(session.id)]}
+                      open={activeSubmenuId === session.id}
+                      onClose={() => setActiveSubmenuId(null)}
+                      options={[
+                        {
+                          text: !isEditing ? 'Edit session' : 'Submit edit',
+                          icon: !isEditing ? 'edit' : 'check_circle',
+                          onClick: () =>
+                            !isEditing ? editRow(session.id) : submitEdit(session.id),
+                        },
+                        {
+                          text: !isEditing ? 'Delete session' : 'Cancel edit',
+                          icon: !isEditing ? 'delete' : 'cancel',
+                          onClick: () => (!isEditing ? deleteRow(session.id) : cancelEdit()),
+                        },
+                      ]}
+                    />
+                  </div>
+                </div>
+              </div>
             );
           })}
-        </tbody>
-      </table>
+        </div>
+      </div>
     </form>
   );
 }

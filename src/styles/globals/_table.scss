@@ -22,12 +22,13 @@ td {
 
   @media only screen and (max-width: $md) {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: auto 1fr;
 
     &::before {
       content: attr(data-label);
       font-weight: var(--bold-weight-text);
       color: inherit;
+      white-space: nowrap;
     }
   }
 }

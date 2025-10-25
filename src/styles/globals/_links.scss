@@ -24,19 +24,6 @@ a {
   }
 }
 
-.more-icon {
-  span {
-    border-radius: 50%;
-    padding: 0.25em;
-  }
-  &:hover {
-    cursor: pointer;
-    span {
-      background-color: var(--secondary-dark);
-    }
-  }
-}
-
 .has-icon:hover .material-icon {
   font-family: 'Material Icons';
 }

@@ -34,3 +34,12 @@
     background-color: var(--bg);
   }
 }
+
+.dayBlock {
+  position: relative;
+  z-index: 1;
+}
+
+.dayBlock.detailsShown {
+  box-shadow: var(--shadow-s);
+}

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useUser } from '@/lib/userContext';
 import { useHandleData } from '@/types/getData';
-import { handleSubmit } from '@/types/submitData';
 import styles from '@/styles/modules/overview.module.scss';
 import { BaseRow } from '@/types/db';
 import Spinner from '@/components/ui/spinner';
@@ -26,7 +25,6 @@ export default function Overview({
     if (saved === 'sessions' || saved === 'chapters') return saved;
     return 'sessions';
   });
-  const [editingRowId, setEditingRowId] = useState<number | boolean>(false);
   const [collapsedDays, setCollapsedDays] = useState<Record<string, boolean>>(() => {
     const saved = localStorage.getItem('collapsedDays');
     return saved ? JSON.parse(saved) : {};
@@ -75,96 +73,6 @@ export default function Overview({
     headers.unshift('count');
     headers.unshift('time');
   }
-
-  const insertRow = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-
-    let editValues = [
-      { key: 'date', id: '#date', type: 'text' },
-      { key: 'start_time', id: '#start-time', type: 'text' },
-      { key: 'end_time', id: '#end-time', type: 'text' },
-      { key: 'start_count', id: '#start-count', type: 'text' },
-      { key: 'end_count', id: '#end-count', type: 'text' },
-      { key: 'words_written', id: '', type: 'number' },
-      { key: 'session_duration', id: '', type: 'text' },
-      { key: 'wpm', id: '', type: 'number' },
-      { key: 'chapter', id: '#chapter', type: 'array' },
-    ];
-
-    if (dataTable == 'chapters') {
-      editValues = [
-        { key: 'date', id: `#date`, type: 'text' },
-        { key: 'chapter_completed', id: `#chapter-completed`, type: 'number' },
-      ];
-    }
-
-    await handleSubmit({
-      userId: currentUser.id,
-      submitType: 'insert',
-      table: dataTable,
-      recordId: null,
-      form,
-      values: editValues,
-    });
-  };
-
-  const editRow = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const row = e.currentTarget.closest('tr') as HTMLTableRowElement;
-    const sessionId = row.dataset.id!;
-    setEditingRowId(Number(sessionId));
-  };
-
-  const cancelEdit = () => {
-    setEditingRowId(false);
-  };
-
-  const submitEdit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    const row = e.currentTarget.closest('tr') as HTMLTableRowElement;
-    const sessionId = row.dataset.id!;
-
-    let editValues = [
-      { key: 'date', id: `#date-${sessionId}`, type: 'text' },
-      { key: 'start_time', id: `#start-time-${sessionId}`, type: 'text' },
-      { key: 'end_time', id: `#end-time-${sessionId}`, type: 'text' },
-      { key: 'start_count', id: `#start-count-${sessionId}`, type: 'text' },
-      { key: 'end_count', id: `#end-count-${sessionId}`, type: 'text' },
-      { key: 'words_written', id: sessionId, type: 'number' },
-      { key: 'session_duration', id: sessionId, type: 'text' },
-      { key: 'wpm', id: sessionId, type: 'number' },
-      { key: 'chapter', id: `#chapter-${sessionId}`, type: 'array' },
-    ];
-
-    if (dataTable == 'chapters') {
-      editValues = [
-        { key: 'date', id: `#date-${sessionId}`, type: 'text' },
-        { key: 'chapter_completed', id: `#chapter-completed-${sessionId}`, type: 'number' },
-      ];
-    }
-
-    await handleSubmit({
-      userId: currentUser.id,
-      submitType: 'update',
-      table: dataTable,
-      recordId: Number(sessionId),
-      form: row,
-      values: editValues,
-    });
-
-    setEditingRowId(false);
-  };
-
-  const deleteRow = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    const row = e.currentTarget.closest('tr') as HTMLTableRowElement;
-    const sessionId = row.dataset.id!;
-
-    await handleSubmit({
-      userId: currentUser.id,
-      submitType: 'delete',
-      table: dataTable,
-      recordId: Number(sessionId),
-    });
-  };
 
   const toggleCollapse = (dayKey: string) => {
     setCollapsedDays(prev => {
@@ -215,7 +123,7 @@ export default function Overview({
                 <div key={dayKey} className={styles.sessionContainer}>
                   {dataTable == 'sessions' ? (
                     <button
-                      className={`${styles.dayBlock} ${styles.containsDetails} contains-details d-flex justify-content-between gap-1 w-fill day-block border-0 align-items-center`}
+                      className={`${styles.dayBlock} ${styles.containsDetails} ${!collapsedDays[dayKey] ? styles.detailsShown : ''} contains-details d-flex justify-content-between gap-1 w-fill day-block border-0 align-items-center`}
                       onClick={() => toggleCollapse(dayKey)}
                     >
                       <p>
@@ -275,12 +183,14 @@ export default function Overview({
                   )}
 
                   {dataTable == 'sessions' ? (
-                    <OverviewDetails
-                      collapsed={collapsedDays[dayKey] ?? true}
-                      dataTable={dataTable}
-                      headers={headers}
-                      sessions={daySessions}
-                    />
+                    <div>
+                      <OverviewDetails
+                        collapsed={collapsedDays[dayKey] ?? true}
+                        dataTable={dataTable}
+                        headers={headers}
+                        sessions={daySessions}
+                      />
+                    </div>
                   ) : null}
                 </div>
               ))}
