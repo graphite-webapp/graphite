@@ -1,0 +1,47 @@
+@use '../variables' as *;
+
+.link-img {
+  width: 3em;
+  height: 3em;
+  transition: 200sm ease-in-out;
+
+  path {
+    fill: var(--text);
+  }
+
+  &:hover {
+    transform: scale(1.2);
+
+    path {
+      fill: var(--text-muted);
+    }
+  }
+}
+
+.avatar {
+  width: 4em;
+  height: 4em;
+  border-radius: 50%;
+
+  path {
+    fill: var(--text);
+  }
+}
+
+.nav-avatar {
+  width: 2em;
+  height: 2em;
+  outline: 3px solid transparent;
+  transition: 200ms ease-in-out;
+  display: block;
+  overflow: visible;
+
+  path {
+    transform: scale(1.01);
+    transform-origin: center;
+  }
+  &:hover,
+  &.avatar-active {
+    outline: 3px solid var(--primary);
+  }
+}

@@ -9,9 +9,9 @@ export default function RadioButton({ title, description = null, options }) {
         if (option.type == 'button') {
           return (
             <button
-              key={option.id}
-              id={option.id}
-              name={option.id}
+              key={option.name}
+              id={option.name}
+              name={option.name}
               type={option.type}
               className={`${styles.btn} btn btn-secondary`}
             >
@@ -21,9 +21,9 @@ export default function RadioButton({ title, description = null, options }) {
         }
 
         return (
-          <div key={option.id} className={`${styles.option} d-flex align-items-center gap-05`}>
-            <input id={option.id} name={option.id} type={option.type}></input>
-            <label htmlFor={option.id} className="regular small-text">
+          <div key={option.name} className={`${styles.option} d-flex align-items-center gap-05`}>
+            <input id={option.name} name={option.name} type={option.type}></input>
+            <label htmlFor={option.name} className="regular small-text">
               {option.label}
             </label>
           </div>

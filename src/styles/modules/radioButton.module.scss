@@ -4,10 +4,10 @@
   padding: 0.25em 0.5em;
   background-color: var(--bg-dark);
   transition: 200ms ease-in-out;
-  box-shadow: var(--shadow-s);
 
   &:hover {
-    box-shadow: var(--shadow-m);
+    cursor: pointer;
+    box-shadow: var(--shadow-s);
     background-color: var(--bg);
   }
 }

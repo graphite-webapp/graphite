@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from '@/styles/modules/navbar.module.scss';
+import { AvatarDefault } from '@/assets/avatar_default';
 
 export default function NavBar() {
   const active = usePathname();
@@ -41,8 +42,12 @@ export default function NavBar() {
               className={`${styles.link} ${active?.startsWith('/profile') ? styles.active : ''} has-icon d-flex flex-center`}
               href="/profile"
             >
-              <span className={styles.text}>Profile</span>
-              <span className={`${styles.icon} material-icon`}>settings</span>
+              <AvatarDefault
+                classes={[
+                  'avatar nav-avatar',
+                  active?.startsWith('/profile') ? 'avatar-active' : '',
+                ]}
+              />
             </Link>
           </li>
         </ul>

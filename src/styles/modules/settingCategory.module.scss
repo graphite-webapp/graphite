@@ -5,11 +5,12 @@
   background-color: var(--bg-dark);
   border-radius: var(--border-radius);
   transition: 200ms ease-in-out;
+  box-shadow: var(--shadow-s);
 
   &:hover {
     cursor: pointer;
     background-color: var(--bg);
-    box-shadow: var(--shadow-s);
+    box-shadow: var(--shadow-m);
   }
 }
 

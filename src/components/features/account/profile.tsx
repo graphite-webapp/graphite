@@ -10,6 +10,7 @@ import { capitalizeString } from '@/types/text';
 import { profileEnd } from 'console';
 import Link from 'next/link';
 import styles from '@/styles/modules/profile.module.scss';
+import { AvatarDefault } from '@/assets/avatar_default';
 
 type ProfileProps = {
   goals: BaseRow[];
@@ -35,6 +36,7 @@ export default function ProfileDetails({
       profiles: initialProfiles,
     }
   );
+  console.log(data.profiles);
 
   const goals = data.goals || [];
   const profileData = data.profiles || [];
@@ -55,17 +57,15 @@ export default function ProfileDetails({
     ? new Date(currentUser.created_at).toLocaleDateString()
     : undefined;
 
-  const handleSignOut = async () => {
-    await signOutUser();
-    redirect('/login');
-  };
-
   return (
     <section className="info-block d-flex flex-col gap-1">
       <section className="d-flex gap-1 align-items-center">
-        <div
-          style={{ width: '4em', height: '4em', backgroundColor: 'red', borderRadius: '50%' }}
-        ></div>
+        {profileData[0].avatar_url !== null ? (
+          <div className="avatar"></div>
+        ) : (
+          <AvatarDefault classes={['avatar']} />
+        )}
+
         <div>
           <h4 className="m-0" style={{ textTransform: 'none' }}>
             {currentUser.user_metadata.display_name}
