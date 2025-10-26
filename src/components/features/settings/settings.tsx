@@ -1,9 +1,8 @@
-import Option from '../../ui/option';
-import About from './about';
-import Account from './account';
-import Appearance from './appearance';
-import Data from './data';
-import Notifications from './notifications';
+import About from './categories/about';
+import Account from './categories/account';
+import Appearance from './categories/appearance';
+import Data from './categories/data';
+import Notifications from './categories/notifications';
 import styles from '@/styles/modules/settings.module.scss';
 
 export default function Settings({ source }) {

@@ -6,6 +6,8 @@
   border-radius: var(--border-radius);
   transition: 200ms ease-in-out;
   box-shadow: var(--shadow-s);
+  position: relative;
+  z-index: 1;
 
   &:hover {
     cursor: pointer;
@@ -16,4 +18,6 @@
 
 .container {
   padding: 0 0.5em;
+  overflow: hidden;
+  transition: max-height 400ms ease-in-out;
 }

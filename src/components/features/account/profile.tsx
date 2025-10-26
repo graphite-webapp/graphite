@@ -59,7 +59,7 @@ export default function ProfileDetails({
 
   return (
     <section className="info-block d-flex flex-col gap-1">
-      <section className="d-flex gap-1 align-items-center">
+      <section className={`${styles.infoBlock} d-flex gap-1 align-items-center`}>
         {profileData[0].avatar_url !== null ? (
           <div className="avatar"></div>
         ) : (
