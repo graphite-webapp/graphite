@@ -11,6 +11,8 @@ import { profileEnd } from 'console';
 import Link from 'next/link';
 import styles from '@/styles/modules/profile.module.scss';
 import { AvatarDefault } from '@/assets/avatar_default';
+import Image from 'next/image';
+import { upsertData, upsertAvatar } from '@/types/upsertData';
 
 type ProfileProps = {
   goals: BaseRow[];
@@ -36,7 +38,6 @@ export default function ProfileDetails({
       profiles: initialProfiles,
     }
   );
-  console.log(data.profiles);
 
   const goals = data.goals || [];
   const profileData = data.profiles || [];
@@ -57,11 +58,52 @@ export default function ProfileDetails({
     ? new Date(currentUser.created_at).toLocaleDateString()
     : undefined;
 
+  const uploadAvatar = async (e: React.FormEvent<HTMLFormElement>) => {
+    if (!currentUser?.id) return;
+
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const avatarUrl = await upsertAvatar(currentUser?.id, file);
+    if (!avatarUrl) return;
+
+    upsertData(
+      'profiles',
+      [
+        {
+          user_id: currentUser.id,
+          avatar_url: avatarUrl,
+        },
+      ],
+      true
+    );
+
+    location.reload();
+  };
+
   return (
     <section className="info-block d-flex flex-col gap-1">
       <section className={`${styles.infoBlock} d-flex gap-1 align-items-center`}>
         {profileData[0].avatar_url !== null ? (
-          <div className="avatar"></div>
+          <div className="p-relative">
+            <Image
+              src={profileData[0].avatar_url.trimEnd()}
+              alt="Profile picture"
+              className="avatar shadow-m"
+              width="48"
+              height="48"
+            />
+            <label htmlFor="upload-avatar" className="btn-avatar d-flex flex-center">
+              <span className="material-icon inline-icon">edit</span>
+            </label>
+            <input
+              id="upload-avatar"
+              type="file"
+              onChange={uploadAvatar}
+              accept="image/*"
+              className="d-none"
+            />
+          </div>
         ) : (
           <AvatarDefault classes={['avatar']} />
         )}

@@ -3,9 +3,29 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from '@/styles/modules/navbar.module.scss';
 import { AvatarDefault } from '@/assets/avatar_default';
+import { BaseRow } from '@/types/db';
+import { useHandleData } from '@/types/getData';
+import Image from 'next/image';
+import { useUser } from '@/lib/userContext';
 
-export default function NavBar() {
+type NavBarProps = {
+  profiles?: BaseRow[];
+};
+
+export default function NavBar(profiles: initialProfiles): NavBarProps {
   const active = usePathname();
+  const { currentUser, signOutUser, loading: userLoading } = useUser();
+
+  const { data, loading: dataLoading } = useHandleData(
+    'component',
+    currentUser?.id,
+    ['profiles'],
+    null,
+    null
+  );
+
+  const profileData = data.profiles || [];
+
   return (
     <header className={`${styles.navbar} d-flex flex-center`}>
       <nav className={styles.nav}>
@@ -42,12 +62,31 @@ export default function NavBar() {
               className={`${styles.link} ${active?.startsWith('/profile') ? styles.active : ''} has-icon d-flex flex-center`}
               href="/profile"
             >
-              <AvatarDefault
-                classes={[
-                  'avatar nav-avatar',
-                  active?.startsWith('/profile') ? 'avatar-active' : '',
-                ]}
-              />
+              {profileData[0] !== undefined && profileData[0].avatar_url !== null ? (
+                <div
+                  className={`${active?.startsWith('/profile') ? 'avatar-active' : ''} nav-avatar-container`}
+                >
+                  <Image
+                    src={profileData[0].avatar_url.trimEnd()}
+                    alt="Profile picture"
+                    className={`${active?.startsWith('/profile') ? 'avatar-active' : ''} avatar nav-avatar`}
+                    width="48"
+                    height="48"
+                  />
+                </div>
+              ) : (
+                <div
+                  className={`${active?.startsWith('/profile') ? 'avatar-active' : ''} nav-avatar-container`}
+                >
+                  <AvatarDefault
+                    classes={[
+                      'avatar',
+                      'nav-avatar',
+                      active?.startsWith('/profile') ? 'avatar-active' : '',
+                    ]}
+                  />
+                </div>
+              )}
             </Link>
           </li>
         </ul>

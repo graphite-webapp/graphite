@@ -19,8 +19,8 @@
 }
 
 .avatar {
-  width: 4em;
-  height: 4em;
+  width: 6em;
+  height: 6em;
   border-radius: 50%;
 
   path {
@@ -28,20 +28,20 @@
   }
 }
 
-.nav-avatar {
+.nav-avatar-container {
   width: 2em;
   height: 2em;
-  outline: 3px solid transparent;
-  transition: 200ms ease-in-out;
-  display: block;
-  overflow: visible;
+  border-radius: 50%;
+  border: 5px solid transparent;
 
-  path {
-    transform: scale(1.01);
-    transform-origin: center;
+  img,
+  svg {
+    width: 100%;
+    height: 100%;
   }
+
   &:hover,
   &.avatar-active {
-    outline: 3px solid var(--primary);
+    border: 5px solid var(--primary);
   }
 }
