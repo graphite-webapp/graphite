@@ -85,8 +85,11 @@
   aspect-ratio: 1 / 1;
   padding: 0.25em;
   border: 1px solid var(--text);
+  transition: 200ms ease-in-out;
 
   &:hover {
     cursor: pointer;
+    transform: scale(1.1);
+    background-color: var(--bg);
   }
 }
