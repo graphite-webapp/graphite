@@ -1,4 +1,4 @@
-export type TableName = 'sessions' | 'chapters' | 'goals' | 'profiles';
+export type TableName = 'sessions' | 'chapters' | 'goals' | 'profiles' | 'settings';
 
 export interface BaseRow {
   id?: number;

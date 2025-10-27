@@ -7,6 +7,7 @@ export type FetchDataResult = {
   chapters?: BaseRow[];
   goals?: BaseRow[];
   profiles?: BaseRow[];
+  settings?: BaseRow[];
 };
 
 export async function getData(

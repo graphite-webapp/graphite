@@ -10,6 +10,8 @@ const tableConstraints = {
   sessions: ['date', 'start_time', 'end_time'],
   chapters: ['date'],
   goals: [],
+  profiles: [],
+  settings: [],
 };
 
 export async function upsertData(table: TableName, data: data[], isImport: boolean = false) {
