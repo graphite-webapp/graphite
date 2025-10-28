@@ -7,6 +7,7 @@ import { BaseRow } from '@/types/db';
 import { useHandleData } from '@/types/getData';
 import Image from 'next/image';
 import { useUser } from '@/lib/userContext';
+import { getAvatarSize } from '@/types/styles';
 
 type NavBarProps = {
   profiles?: BaseRow[];
@@ -25,6 +26,8 @@ export default function NavBar(profiles: initialProfiles): NavBarProps {
   );
 
   const profileData = data.profiles || [];
+
+  const avatarSize = getAvatarSize('class', '.nav-avatar-container');
 
   return (
     <header className={`${styles.navbar} d-flex flex-center`}>
@@ -58,20 +61,18 @@ export default function NavBar(profiles: initialProfiles): NavBarProps {
             </Link>
           </li>
           <li>
-            <Link
-              className={`${styles.link} ${active?.startsWith('/profile') ? styles.active : ''} has-icon d-flex flex-center`}
-              href="/profile"
-            >
+            <Link className={`d-flex flex-center`} href="/profile">
               {profileData[0] !== undefined && profileData[0].avatar_url !== null ? (
                 <div
                   className={`${active?.startsWith('/profile') ? 'avatar-active' : ''} nav-avatar-container`}
                 >
                   <Image
+                    id="avatar"
                     src={profileData[0].avatar_url.trimEnd()}
                     alt="Profile picture"
-                    className={`${active?.startsWith('/profile') ? 'avatar-active' : ''} avatar nav-avatar`}
-                    width="48"
-                    height="48"
+                    className={`${active?.startsWith('/profile') ? 'avatar-active' : ''} avatar`}
+                    width={avatarSize}
+                    height={avatarSize}
                   />
                 </div>
               ) : (
@@ -79,11 +80,7 @@ export default function NavBar(profiles: initialProfiles): NavBarProps {
                   className={`${active?.startsWith('/profile') ? 'avatar-active' : ''} nav-avatar-container`}
                 >
                   <AvatarDefault
-                    classes={[
-                      'avatar',
-                      'nav-avatar',
-                      active?.startsWith('/profile') ? 'avatar-active' : '',
-                    ]}
+                    classes={['avatar', active?.startsWith('/profile') ? 'avatar-active' : '']}
                   />
                 </div>
               )}

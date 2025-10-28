@@ -13,6 +13,7 @@ import styles from '@/styles/modules/profile.module.scss';
 import { AvatarDefault } from '@/assets/avatar_default';
 import Image from 'next/image';
 import { upsertData, upsertAvatar } from '@/types/upsertData';
+import { getAvatarSize } from '@/types/styles';
 
 type ProfileProps = {
   goals: BaseRow[];
@@ -58,6 +59,8 @@ export default function ProfileDetails({
     ? new Date(currentUser.created_at).toLocaleDateString()
     : undefined;
 
+  const avatarSize = getAvatarSize('id', 'avatar');
+
   const uploadAvatar = async (e: React.FormEvent<HTMLFormElement>) => {
     if (!currentUser?.id) return;
 
@@ -87,11 +90,12 @@ export default function ProfileDetails({
         {profileData[0].avatar_url !== null ? (
           <div className="p-relative">
             <Image
+              id="avatar"
               src={profileData[0].avatar_url.trimEnd()}
               alt="Profile picture"
               className="avatar shadow-m"
-              width="48"
-              height="48"
+              width={avatarSize}
+              height={avatarSize}
             />
             <label htmlFor="upload-avatar" className="btn-avatar d-flex flex-center">
               <span className="material-icon inline-icon">edit</span>

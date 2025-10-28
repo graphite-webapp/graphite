@@ -4,6 +4,10 @@
   display: grid;
 }
 
+img {
+  object-fit: cover;
+}
+
 .grid-columns-1-1 {
   grid-template-columns: 1fr 1fr;
 }
