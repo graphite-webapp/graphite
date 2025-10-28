@@ -1,5 +1,9 @@
 export type TableName = 'sessions' | 'chapters' | 'goals' | 'profiles' | 'settings';
 
+export interface SvgProps {
+  classes?: string[];
+}
+
 export interface BaseRow {
   id?: number;
   user_id?: string;

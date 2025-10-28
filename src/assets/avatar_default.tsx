@@ -1,6 +1,7 @@
 'use client';
+import { SvgProps } from '@/types/db';
 
-export const AvatarDefault = ({ classes }) => {
+export const AvatarDefault = ({ classes }: SvgProps) => {
   return (
     <svg
       width="20"

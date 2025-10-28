@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { useUser } from '@/lib/userContext';
 import { useEffect } from 'react';
 import { useHandleData } from '@/types/getData';
-import Profile from '@/components/features/account/profileDetails';
+// import Profile from '@/components/features/account/profileDetails';
 import ProfileDetails from '@/components/features/account/profile';
 import Settings from '@/components/features/settings/settings';
 import Spinner from '@/components/ui/spinner';
@@ -32,7 +32,7 @@ export default function ProfileSettings() {
     <main className={`${styles.container} d-flex gap-1`}>
       <section className="d-flex flex-col gap-1">
         {/* <Profile goals={data.goals ?? []} /> */}
-        <ProfileDetails goals={data.goals ?? []} includeSettings={true} />
+        <ProfileDetails goals={data.goals ?? []} includeSettings={true} editingAllowed={true} />
       </section>
 
       <section className="d-flex flex-col gap-1">

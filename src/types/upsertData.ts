@@ -39,7 +39,7 @@ export async function upsertData(table: TableName, data: data[], hasConstraints:
   }
 }
 
-export async function upsertAvatar(userId, file) {
+export async function upsertAvatar(userId: string, file: File) {
   const folderPath = `${userId}/`;
   const filePath = `${folderPath}${Date.now()}-avatar`;
 
@@ -50,7 +50,7 @@ export async function upsertAvatar(userId, file) {
 
     if (listError) throw listError;
 
-    if (existingFiles && existingFiles.length > 0) {
+    if (Array.isArray(existingFiles) && existingFiles.length > 0) {
       const filesToDelete = existingFiles.map(f => `${folderPath}${f.name}`);
       const { error: deleteError } = await supabase.storage.from('avatars').remove(filesToDelete);
 
@@ -73,3 +73,16 @@ export async function upsertAvatar(userId, file) {
     alert('Failed to upload image');
   }
 }
+
+export const updateDisplayName = async (userId: string, newName: string) => {
+  const { error } = await supabase.auth.updateUser({
+    data: { display_name: newName },
+  });
+
+  if (error) {
+    console.error('Failed to update display name:', error.message);
+    return false;
+  }
+
+  return true;
+};

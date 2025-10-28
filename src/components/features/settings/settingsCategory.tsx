@@ -6,7 +6,7 @@ interface SettingsCategoryProps {
   title: string;
   defaultCollapsed?: boolean;
   children: ReactNode;
-  storageKey?: string;
+  storageKey?: string | null;
   containerClasses?: string[];
 }
 
@@ -14,11 +14,11 @@ export default function SettingsCategory({
   title,
   defaultCollapsed = false,
   children,
-  storageKey,
+  storageKey = null,
   containerClasses,
 }: SettingsCategoryProps) {
   const [collapsed, setCollapsed] = useState<boolean>(() => {
-    if (typeof window !== 'undefined' && storageKey) {
+    if (typeof window !== 'undefined' && storageKey == null) {
       const saved = localStorage.getItem(`collapsed-${storageKey}`);
       return saved !== null ? JSON.parse(saved) : defaultCollapsed;
     }
@@ -37,7 +37,8 @@ export default function SettingsCategory({
   const toggleCollapse = () => {
     setCollapsed(prev => {
       const next = !prev;
-      if (storageKey) localStorage.setItem(`collapsed-${storageKey}`, JSON.stringify(next));
+      if (storageKey !== null)
+        localStorage.setItem(`collapsed-${storageKey}`, JSON.stringify(next));
       return next;
     });
   };

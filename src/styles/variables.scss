@@ -45,12 +45,16 @@ $xs: 22em;
   --warning-l: 44%;
   --error-hs: 4, 79%;
   --error-l: 26%;
+  --success-hs: 124, 62%;
+  --success-l: 18%;
 
   // Calculated colors
   --warning: hsl(var(--warning-hs), calc(var(--warning-l) - 0%));
   --warning-dark: hsl(var(--warning-hs), calc(var(--warning-l) - 5%));
   --error: hsl(var(--error-hs), calc(var(--error-l) - 0%));
   --error-dark: hsl(var(--error-hs), calc(var(--error-l) - 5%));
+  --success: hsl(var(--success-hs), calc(var(--success-l) - 0%));
+  --success-dark: hsl(var(--success-hs), calc(var(--success-l) - 5%));
 
   // GRADIENTS
   --primary-secondary: linear-gradient(to right, var(--primary), var(--secondary));

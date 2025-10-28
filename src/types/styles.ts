@@ -1,5 +1,5 @@
 export const getAvatarSize = (selectorType: 'id' | 'class', selector: string) => {
-  let avatarSize = 100;
+  let avatarSize: string | number = 100;
   if (typeof window === 'undefined' || typeof document === 'undefined') {
     return avatarSize;
   }
@@ -12,14 +12,16 @@ export const getAvatarSize = (selectorType: 'id' | 'class', selector: string) =>
   avatarSize = getComputedStyle(element).getPropertyValue('--avatar-size');
 
   if (avatarSize.endsWith('em')) {
-    const textSize = getComputedStyle(element).getPropertyValue('font-size').replace('px', '');
+    const textSize = Number(
+      getComputedStyle(element).getPropertyValue('font-size').replace('px', '')
+    );
 
-    avatarSize = Number(avatarSize.replace('em', '') * textSize);
+    avatarSize = Number(Number(avatarSize.replace('em', '')) * textSize);
   }
 
   if (typeof avatarSize !== 'number') {
     avatarSize = Number(avatarSize.replace('em', '').replace('rem', '').replace('px', ''));
   }
 
-  return avatarSize;
+  return Number(avatarSize);
 };

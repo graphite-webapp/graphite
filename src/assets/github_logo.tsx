@@ -1,4 +1,7 @@
-export const GithubLogo = ({ classes }) => {
+'use client';
+import { SvgProps } from '@/types/db';
+
+export const GithubLogo = ({ classes }: SvgProps) => {
   return (
     <svg
       version="1.2"

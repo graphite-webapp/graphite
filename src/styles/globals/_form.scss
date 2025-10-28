@@ -9,7 +9,8 @@ select {
   font-size: inherit;
 }
 
-input {
+input,
+textarea {
   background-color: var(--bg-light);
   border: 2px solid var(--bg-dark);
   border-radius: var(--border-radius);

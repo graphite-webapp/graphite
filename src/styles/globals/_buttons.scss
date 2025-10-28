@@ -57,6 +57,14 @@
   }
 }
 
+.btn-success {
+  background-color: var(--success);
+
+  &:hover {
+    background-color: var(--success-dark);
+  }
+}
+
 .no-button {
   color: inherit;
   background-color: transparent;

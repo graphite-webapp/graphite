@@ -3,27 +3,16 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from '@/styles/modules/navbar.module.scss';
 import { AvatarDefault } from '@/assets/avatar_default';
-import { BaseRow } from '@/types/db';
 import { useHandleData } from '@/types/getData';
 import Image from 'next/image';
 import { useUser } from '@/lib/userContext';
 import { getAvatarSize } from '@/types/styles';
 
-type NavBarProps = {
-  profiles?: BaseRow[];
-};
-
-export default function NavBar(profiles: initialProfiles): NavBarProps {
+export default function NavBar() {
   const active = usePathname();
-  const { currentUser, signOutUser, loading: userLoading } = useUser();
+  const { currentUser } = useUser();
 
-  const { data, loading: dataLoading } = useHandleData(
-    'component',
-    currentUser?.id,
-    ['profiles'],
-    null,
-    null
-  );
+  const { data } = useHandleData('component', currentUser?.id, ['profiles'], null, null);
 
   const profileData = data.profiles || [];
 
@@ -68,7 +57,7 @@ export default function NavBar(profiles: initialProfiles): NavBarProps {
                 >
                   <Image
                     id="avatar"
-                    src={profileData[0].avatar_url.trimEnd()}
+                    src={String(profileData[0].avatar_url).trimEnd()}
                     alt="Profile picture"
                     className={`${active?.startsWith('/profile') ? 'avatar-active' : ''} avatar`}
                     width={avatarSize}

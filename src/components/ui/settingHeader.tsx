@@ -1,6 +1,11 @@
 import styles from '@/styles/modules/settingCategory.module.scss';
 
-export default function SettingHeader({ title, onClick }) {
+type SettingHeaderProps = {
+  title: string;
+  onClick: () => void;
+};
+
+export default function SettingHeader({ title, onClick }: SettingHeaderProps) {
   return (
     <h4 onClick={onClick} className={styles.title}>
       {title}

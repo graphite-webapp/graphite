@@ -1,4 +1,7 @@
-export const DiscordLogo = ({ classes }) => {
+'use client';
+import { SvgProps } from '@/types/db';
+
+export const DiscordLogo = ({ classes }: SvgProps) => {
   return (
     <svg
       width="1396"

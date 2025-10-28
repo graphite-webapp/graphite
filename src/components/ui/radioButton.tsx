@@ -1,10 +1,22 @@
 import styles from '@/styles/modules/radioButton.module.scss';
 
-export default function RadioButton({ title, description = null, options }) {
+type inputOptions = {
+  type: string;
+  name: string;
+  label: string;
+};
+
+type RadioButtonProps = {
+  title: string;
+  description?: string;
+  options: inputOptions[];
+};
+
+export default function RadioButton({ title, description, options }: RadioButtonProps) {
   return (
     <div className="d-flex flex-col gap-05">
       <p className="bold">{title}</p>
-      {description ? <p className="tiny-text">{description}</p> : null}
+      {description !== undefined ? <p className="tiny-text">{description}</p> : null}
       {options.map(option => {
         if (option.type == 'button') {
           return (
