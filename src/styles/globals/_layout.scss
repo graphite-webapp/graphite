@@ -85,6 +85,7 @@ main {
   background-color: var(--primary);
   font-size: var(--h6-size);
   font-weight: var(--bold-weight-text);
+  color: hsl(var(--white-hs), var(--white-l));
 }
 
 .day-block {
