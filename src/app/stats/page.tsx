@@ -10,6 +10,7 @@ import WordsWritten from '@/components/features/charts/wordswritten';
 import ChaptersCompleted from '@/components/features/charts/chapterscompleted';
 import styles from '@/styles/modules/stats.module.scss';
 import Spinner from '@/components/ui/spinner';
+import UserLoading from '@/components/ui/userLoading';
 
 export default function Stats({ isMain = true }) {
   const Tag = isMain ? 'main' : 'section';
@@ -25,12 +26,15 @@ export default function Stats({ isMain = true }) {
     'goals',
   ]);
 
-  if (dataLoading || !currentUser || userLoading)
+  if (dataLoading || !currentUser || userLoading) {
+    if (isMain && userLoading) return <UserLoading />;
+
     return (
       <Tag className={`d-flex flex-center`}>
         <Spinner />
       </Tag>
     );
+  }
 
   return (
     <Tag className={`${styles.container}`}>

@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { useHandleData } from '@/types/getData';
 import Overview from '@/components/features/sessions/overview';
 import Spinner from '@/components/ui/spinner';
+import UserLoading from '@/components/ui/userLoading';
 
 export default function Sessions() {
   const { currentUser, loading: userLoading } = useUser();
@@ -18,12 +19,15 @@ export default function Sessions() {
     'chapters',
   ]);
 
-  if (dataLoading || !currentUser || userLoading)
+  if (dataLoading || !currentUser || userLoading) {
+    if (userLoading) return <UserLoading />;
+
     return (
       <main className={`d-flex flex-center`}>
         <Spinner />
       </main>
     );
+  }
 
   return (
     <main className="d-flex flex-col gap-1">

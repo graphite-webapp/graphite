@@ -10,13 +10,15 @@ import { getAvatarSize } from '@/types/styles';
 
 export default function NavBar() {
   const active = usePathname();
-  const { currentUser } = useUser();
+  const { currentUser, loading: userLoading } = useUser();
 
   const { data } = useHandleData('component', currentUser?.id, ['profiles'], null, null);
 
   const profileData = data.profiles || [];
 
   const avatarSize = getAvatarSize('class', '.nav-avatar-container');
+
+  if (!currentUser || userLoading) return;
 
   return (
     <header className={`${styles.navbar} d-flex flex-center`}>

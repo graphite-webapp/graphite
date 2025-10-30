@@ -8,6 +8,7 @@ import ProfileDetails from '@/components/features/account/profile';
 import Settings from '@/components/features/settings/settings';
 import Spinner from '@/components/ui/spinner';
 import styles from '@/styles/modules/profile.module.scss';
+import UserLoading from '@/components/ui/userLoading';
 
 export default function ProfileSettings() {
   const { currentUser, loading: userLoading } = useUser();
@@ -21,12 +22,15 @@ export default function ProfileSettings() {
     'profiles',
   ]);
 
-  if (dataLoading || !currentUser || userLoading)
+  if (dataLoading || !currentUser || userLoading) {
+    if (userLoading) return <UserLoading />;
+
     return (
       <main className={`d-flex flex-center`}>
         <Spinner />
       </main>
     );
+  }
 
   return (
     <main className={`${styles.container} d-flex gap-1`}>

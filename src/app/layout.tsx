@@ -4,7 +4,7 @@ import UserProvider from '@/lib/userContext';
 import NavBar from '@/components/layout/navbar';
 import '@/styles/globals.scss';
 import GridOverlay from '@/components/layout/gridoverlay';
-import { Montserrat, Comfortaa, Fredoka } from 'next/font/google';
+import { Montserrat, Comfortaa, Fredoka, Grenze_Gotisch } from 'next/font/google';
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -13,6 +13,7 @@ const montserrat = Montserrat({
 
 const comfortaa = Comfortaa({ subsets: ['latin'], variable: '--font-comfortaa' });
 const fredoka = Fredoka({ subsets: ['latin'], variable: '--font-fredoka' });
+const grenzeGotisch = Grenze_Gotisch({ subsets: ['latin'], variable: '--font-grenze-gotisch' });
 
 export default function RootLayout({
   children,
@@ -36,7 +37,10 @@ export default function RootLayout({
   }, []);
 
   return (
-    <html lang="en" className={`${montserrat.variable} ${comfortaa.variable} ${fredoka.variable}`}>
+    <html
+      lang="en"
+      className={`${montserrat.variable} ${comfortaa.variable} ${fredoka.variable} ${grenzeGotisch.variable}`}
+    >
       <body className="d-flex flex-col flex-center">
         {process.env.NODE_ENV === 'development' && <GridOverlay show={showGrid} />}
         <UserProvider>
