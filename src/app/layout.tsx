@@ -11,7 +11,6 @@ const montserrat = Montserrat({
   variable: '--font-montserrat',
 });
 
-// const winkySans = Winky_Sans({ subsets: ['latin'], variable: '--font-winky-sans' });
 const comfortaa = Comfortaa({ subsets: ['latin'], variable: '--font-comfortaa' });
 const fredoka = Fredoka({ subsets: ['latin'], variable: '--font-fredoka' });
 

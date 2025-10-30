@@ -27,7 +27,9 @@ export default function ChaptersCompleted({ chapters: initialChapters }: Chapter
     }
   );
 
-  const chapters = aggregateData(data.chapters as DataRow[], 'chapter_completed');
+  const chapters = aggregateData(data.chapters as DataRow[], 'month', {
+    chapter_completed: 'sum',
+  });
 
   if (!currentUser || userLoading) {
     return (

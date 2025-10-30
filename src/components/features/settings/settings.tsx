@@ -4,16 +4,35 @@ import Appearance from './categories/appearance';
 import Data from './categories/data';
 import Notifications from './categories/notifications';
 import styles from '@/styles/modules/settings.module.scss';
+import { useHandleData } from '@/types/getData';
+import { useUser } from '@/lib/userContext';
+import Spinner from '@/components/ui/spinner';
 
 export default function Settings({ source }) {
+  const { currentUser, loading: userLoading } = useUser();
+
+  const { data, loading: dataLoading } = useHandleData('component', currentUser?.id, ['settings']);
+
+  if (!currentUser || userLoading || dataLoading || data.sessions?.length == 0) {
+    return (
+      <section
+        className={`${source == 'profile' ? styles.container : 'd-flex'} info-block flex-col gap-1 flex-grow-1`}
+      >
+        <Spinner />
+      </section>
+    );
+  }
+
+  const settings = data.settings ?? [];
+
   return (
     <section
       className={`${source == 'profile' ? styles.container : 'd-flex'} info-block flex-col gap-1 flex-grow-1`}
     >
       <Account />
       <Notifications />
-      <Data />
-      <Appearance />
+      <Data settings={settings[0]} />
+      <Appearance settings={settings[0]} />
       <About />
     </section>
   );

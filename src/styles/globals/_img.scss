@@ -3,7 +3,8 @@
 .link-img {
   width: 3em;
   height: 3em;
-  transition: 200sm ease-in-out;
+  transition: 200ms ease-in-out;
+  margin-top: 0.25em;
 
   path {
     fill: var(--text);

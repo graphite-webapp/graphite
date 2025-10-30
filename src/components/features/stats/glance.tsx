@@ -2,6 +2,7 @@ import { useUser } from '@/lib/userContext';
 import { useHandleData } from '@/types/getData';
 import { BaseRow } from '@/types/db';
 import Spinner from '@/components/ui/spinner';
+import { aggregateData, DataRow } from '@/types/formatData';
 
 type GlanceProps = {
   monthOffset: string;
@@ -19,7 +20,7 @@ export default function Glance({
   const date = new Date();
   date.setMonth(date.getMonth() + monthOffsetNum);
 
-  const { currentUser, loading: userLoading } = useUser();
+  const { currentUser, loading: userLoading, settings } = useUser();
 
   const startPeriod = new Date(date.getFullYear(), date.getMonth());
   const endPeriod = new Date(date.getFullYear(), date.getMonth() + 1, 0);
@@ -37,7 +38,15 @@ export default function Glance({
     return <Spinner />;
   }
 
-  const sessions = data.sessions || [];
+  let sessions = data.sessions || [];
+  if (settings.data_calc == 'per day') {
+    sessions = aggregateData(sessions as DataRow[], 'day', {
+      start_count: 'min',
+      end_count: 'max',
+      words_written: 'sum',
+      wpm: 'avg',
+    });
+  }
   const chapters = data.chapters || [];
 
   let sessionsDone = true;

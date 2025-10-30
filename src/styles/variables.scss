@@ -14,17 +14,37 @@ $xs: 22em;
   --xs: #{$xs};
 
   // BASE COLORS
-  // Color codes
-  --primary-hs: 248, 43%;
-  --primary-l: 21%;
-  --secondary-hs: 31, 43%;
-  --secondary-l: 21%;
-  --accent-hs: 33, 70%;
-  --accent-l: 73%;
-  --bg-hs: 31, 30%;
-  --bg-l: 83%;
-  --text-hs: 36, 12%;
-  --text-l: 10%;
+  // Color codes - Descriptive names
+  --black-hs: 38, 15%;
+  --black-l: 13%;
+
+  --white-hs: 31, 30%;
+  --white-l: 83%;
+
+  --blue-hs: 248, 43%;
+  --blue-l: 21%;
+
+  --brown-hs: 31, 43%;
+  --brown-l: 21%;
+
+  --beige-hs: 33, 70%;
+  --beige-l: 73%;
+
+  // Color codes - Functional names
+  --primary-hs: var(--blue-hs);
+  --primary-l: var(--blue-l);
+
+  --secondary-hs: var(--brown-hs);
+  --secondary-l: var(--brown-l);
+
+  --accent-hs: var(--beige-hs);
+  --accent-l: var(--beige-l);
+
+  --bg-hs: var(--white-hs);
+  --bg-l: var(--white-l);
+
+  --text-hs: var(--black-hs);
+  --text-l: var(--black-l);
 
   // Calculated colors
   --primary: hsl(var(--primary-hs), calc(var(--primary-l) - 0%));
@@ -72,14 +92,14 @@ $xs: 22em;
 
   // SHADOWS
   --shadow-s:
-    0px 2px 4px hsla(var(--text-hs), var(--text-l), 20%),
-    0px 4px 8px hsla(var(--text-hs), var(--text-l), 10%);
+    0px 2px 4px hsla(var(--black-hs), var(--black-l), 20%),
+    0px 4px 8px hsla(var(--black-hs), var(--black-l), 10%);
   --shadow-m:
-    0px 4px 8px hsla(var(--text-hs), var(--text-l), 20%),
-    0px 8px 10px hsla(var(--text-hs), var(--text-l), 10%);
+    0px 4px 8px hsla(var(--black-hs), var(--black-l), 20%),
+    0px 8px 10px hsla(var(--black-hs), var(--black-l), 10%);
   --shadow-l:
-    0px 8px 10px hsla(var(--text-hs), var(--text-l), 20%),
-    0px 10px 12px hsla(var(--text-hs), var(--text-l), 10%);
+    0px 8px 10px hsla(var(--black-hs), var(--black-l), 20%),
+    0px 10px 12px hsla(var(--black-hs), var(--black-l), 10%);
 
   // FONT SETTINGS
   --family-heading: var(--font-fredoka), system-ui, sans-serif;
@@ -107,8 +127,38 @@ $xs: 22em;
   --border-radius: 5px;
 }
 
-// @media (prefers-color-scheme: dark) {
-//   :root {
+:root.dark {
+  --primary-hs: var(--blue-hs);
+  --primary-l: var(--blue-l);
 
-// }
-// }
+  --secondary-hs: var(--beige-hs);
+  --secondary-l: var(--beige-l);
+
+  --accent-hs: var(--brown-hs);
+  --accent-l: var(--brown-l);
+
+  --bg-hs: var(--black-hs);
+  --bg-l: var(--black-l);
+
+  --text-hs: var(--white-hs);
+  --text-l: var(--white-l);
+
+  --text-muted: hsl(var(--text-hs), calc(var(--text-l) - 20%));
+}
+
+:root.light {
+  --primary-hs: var(--blue-hs);
+  --primary-l: var(--blue-l);
+
+  --secondary-hs: var(--brown-hs);
+  --secondary-l: var(--brown-l);
+
+  --accent-hs: var(--beige-hs);
+  --accent-l: var(--beige-l);
+
+  --bg-hs: var(--white-hs);
+  --bg-l: var(--white-l);
+
+  --text-hs: var(--black-hs);
+  --text-l: var(--black-l);
+}

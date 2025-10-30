@@ -7,11 +7,11 @@ export type data = {
 };
 
 const tableConstraints = {
-  sessions: ['date', 'start_time', 'end_time'],
-  chapters: ['date'],
-  goals: [],
+  sessions: ['user_id', 'date', 'start_time', 'end_time'],
+  chapters: ['user_id', 'date'],
+  goals: ['user_id'],
   profiles: ['user_id'],
-  settings: [],
+  settings: ['user_id'],
 };
 
 export async function upsertData(table: TableName, data: data[], hasConstraints: boolean = false) {

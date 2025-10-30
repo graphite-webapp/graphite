@@ -3,12 +3,17 @@ export type DataRow = {
   date: string;
 };
 
+type AggregationConfig = {
+  [key: string]: 'sum' | 'min' | 'max' | 'avg';
+};
+
 export function aggregateData<T extends DataRow>(
   data: T[],
-  valueKey: keyof T,
-  aggregateBy: 'month' | 'day' = 'month'
+  aggregateBy: 'month' | 'day' = 'month',
+  config?: AggregationConfig<T>
 ): T[] {
   const aggregated: Record<string, T> = {};
+  const counts: Record<string, Record<string, number>> = {};
 
   data.forEach(session => {
     const sessionDate = new Date(session.date);
@@ -16,8 +21,6 @@ export function aggregateData<T extends DataRow>(
       aggregateBy == 'day'
         ? sessionDate.toISOString().split('T')[0]
         : `${sessionDate.getMonth() + 1}-${sessionDate.getFullYear()}`;
-
-    const value = Number(session[valueKey] ?? 0);
 
     if (aggregated[key] === undefined) {
       aggregated[key] = { ...session };
@@ -29,10 +32,44 @@ export function aggregateData<T extends DataRow>(
               sessionDate.getDate()
             ).toISOString()
           : new Date(sessionDate.getFullYear(), sessionDate.getMonth(), 1).toISOString();
-
-      (aggregated[key][valueKey] as number) = value;
+      counts[key] = {};
     } else {
-      (aggregated[key][valueKey] as number) += value;
+      const existing = aggregated[key];
+
+      for (const valueKey in session) {
+        const rule = config?.[valueKey as keyof T];
+        const value = session[valueKey];
+
+        if (typeof value !== 'number') continue;
+
+        switch (rule) {
+          case 'sum':
+            existing[valueKey] = ((existing[valueKey] as number) ?? 0) + value;
+            break;
+          case 'min':
+            existing[valueKey] =
+              existing[valueKey] === undefined
+                ? value
+                : Math.min(existing[valueKey] as number, value);
+            break;
+          case 'max':
+            existing[valueKey] =
+              existing[valueKey] === undefined
+                ? value
+                : Math.max(existing[valueKey] as number, value);
+            break;
+          case 'avg':
+            counts[key][valueKey] = (counts[key][valueKey] ?? 0) + 1;
+            const count = counts[key][valueKey];
+            const prev = (existing[valueKey] as number) ?? 0;
+            existing[valueKey] = prev + (value - prev) / count;
+            break;
+          default:
+            // no rule — ignore
+            existing[valueKey] = ((existing[valueKey] as number) ?? 0) + value;
+            break;
+        }
+      }
     }
   });
 

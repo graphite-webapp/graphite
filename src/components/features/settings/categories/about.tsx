@@ -8,18 +8,24 @@ export default function About() {
       title="About Graphite"
       storageKey="about"
       defaultCollapsed={false}
-      containerClasses={['d-flex', 'gap-1']}
+      containerClasses={['d-flex', 'flex-col', 'gap-05']}
     >
-      <a className="bold text-link" href="https://discord.gg/exakJqYPHA" target="blank">
-        <DiscordLogo classes={['link-img']} />
-      </a>
-      <a
-        className="bold text-link"
-        href="https://github.com/graphite-webapp/graphite"
-        target="blank"
-      >
-        <GithubLogo classes={['link-img']} />
-      </a>
+      {/* PRIVACY */}
+      <p>Find out what we do with your data here.</p>
+
+      {/* LINKS */}
+      <div className="d-flex gap-1">
+        <a className="bold text-link" href="https://discord.gg/exakJqYPHA" target="blank">
+          <DiscordLogo classes={['link-img']} />
+        </a>
+        <a
+          className="bold text-link"
+          href="https://github.com/graphite-webapp/graphite"
+          target="blank"
+        >
+          <GithubLogo classes={['link-img']} />
+        </a>
+      </div>
     </SettingsCategory>
   );
 }

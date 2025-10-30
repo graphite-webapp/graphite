@@ -29,7 +29,9 @@ export default function WordsWritten({ sessions: initialSessions }: WordsWritten
 
   const sessions =
     data.sessions && data.sessions.length > 0
-      ? aggregateData(data.sessions as DataRow[], 'words_written')
+      ? aggregateData(data.sessions as DataRow[], 'month', {
+          words_written: 'sum',
+        })
       : [];
 
   if (!currentUser || loading) {

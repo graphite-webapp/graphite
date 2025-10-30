@@ -2,11 +2,18 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import { Session, User, AuthError } from '@supabase/supabase-js';
+type SettingsType = {
+  [key: string]: any; // dynamic settings keys like 'theme', 'data_calc', etc.
+};
 
 type UserContextType = {
   currentUser: User | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
   loading: boolean;
+  // theme: string;
+  // setTheme: React.Dispatch<React.SetStateAction<string>>;
+  settings: SettingsType;
+  setSetting: (key: string, value: any) => Promise<void>;
   signUpNewUser: (
     email: string,
     password: string,
@@ -35,6 +42,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export default function UserProvider({ children }: UserProviderProps) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [settings, setSettings] = useState<SettingsType>({});
   const [loading, setLoading] = useState(true);
 
   const signUpNewUser: UserContextType['signUpNewUser'] = async (
@@ -79,10 +87,31 @@ export default function UserProvider({ children }: UserProviderProps) {
     setCurrentUser(null);
   };
 
+  const setSetting = async (key: string, value: any) => {
+    if (!currentUser) return;
+
+    // Update local state first
+    setSettings(prev => ({ ...prev, [key]: value }));
+
+    // Upsert to the settings table
+    await supabase
+      .from('settings')
+      .upsert({ user_id: currentUser.id, [key]: value }, { onConflict: 'user_id' });
+  };
+
   useEffect(() => {
     const getSession = async () => {
       const { data } = await supabase.auth.getSession();
       setCurrentUser(data?.session?.user ?? null);
+
+      if (data?.session?.user?.id) {
+        const { data: settingsData } = await supabase
+          .from('settings')
+          .select('*')
+          .eq('user_id', data.session.user.id)
+          .single();
+        setSettings(settingsData ?? {});
+      }
       setLoading(false);
     };
 
@@ -97,9 +126,32 @@ export default function UserProvider({ children }: UserProviderProps) {
     };
   }, []);
 
+  useEffect(() => {
+    const root = document.documentElement;
+    const theme = settings.theme ?? 'system';
+
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else if (theme === 'light') {
+      root.classList.remove('dark');
+    } else if (theme === 'system') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      root.classList.toggle('dark', prefersDark);
+    }
+  }, [settings.theme]);
+
   return (
     <UserContext.Provider
-      value={{ currentUser, setCurrentUser, loading, signUpNewUser, signInUser, signOutUser }}
+      value={{
+        currentUser,
+        setCurrentUser,
+        loading,
+        settings,
+        setSetting,
+        signUpNewUser,
+        signInUser,
+        signOutUser,
+      }}
     >
       {children}
     </UserContext.Provider>

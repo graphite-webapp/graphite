@@ -20,7 +20,10 @@ export async function getData(
     .from(table)
     .select()
     .eq('user_id', userId)
-    .order(table !== 'goals' && table !== 'profiles' ? 'date' : 'created_at', { ascending: true });
+    .order(
+      table !== 'goals' && table !== 'profiles' && table !== 'settings' ? 'date' : 'created_at',
+      { ascending: true }
+    );
 
   if (error || data == null) {
     console.error('There was a problem signing up.', error);
@@ -75,6 +78,11 @@ export async function collectData(
   if (tables.includes('profiles')) {
     const profileData = await getData('profiles', userId);
     if (profileData.success) result.profiles = profileData.data;
+  }
+
+  if (tables.includes('settings')) {
+    const profileData = await getData('settings', userId);
+    if (profileData.success) result.settings = profileData.data;
   }
 
   return result;

@@ -8,7 +8,7 @@
   font-weight: inherit;
   font-family: inherit;
   letter-spacing: inherit;
-  color: var(--bg);
+  color: hsl(var(--white-hs), var(--white-l));
   transition: 200ms ease-in-out;
   box-shadow: var(--shadow-s);
 
@@ -30,6 +30,7 @@
 
 .btn-secondary {
   background-color: var(--secondary);
+  color: var(--bg);
 
   &:hover {
     background-color: var(--secondary-dark);

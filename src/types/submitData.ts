@@ -5,7 +5,7 @@ import { TableName } from './db';
 export type submitValue = {
   key: string;
   id: string;
-  type: 'number' | 'array' | 'text';
+  type: 'number' | 'array' | 'text' | 'radio';
 };
 
 type handleSubmitParams = {
@@ -88,6 +88,11 @@ export const handleSubmit = async ({
       return;
     }
 
+    if (value.type == 'radio') {
+      formData[value.key] = (form.querySelector(value.id) as HTMLInputElement).id.replace('-', ' ');
+      return;
+    }
+
     formData[value.key] = (form.querySelector(value.id) as HTMLInputElement).value;
   });
 
@@ -120,7 +125,7 @@ export const handleSubmit = async ({
     }
   }
 
-  upsertData(table, [formData]);
+  upsertData(table, [formData], table == 'settings' ? true : false);
   if (form instanceof HTMLFormElement) form.reset();
   location.reload();
 };

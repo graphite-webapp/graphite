@@ -222,6 +222,7 @@ export default function ProfileDetails({
           ) : null}
 
           <section className="d-flex flex-col gap-1">
+            {/* PROFILE DATA */}
             <ProfileInfo title="Member since" info={String(createdAt)} />
             <ProfileInfo
               inputId="bio"
@@ -230,12 +231,40 @@ export default function ProfileDetails({
               title="Bio"
               info={String(profileData[0].bio)}
             />
-            <ProfileInfo title="Goal type" info={`${capitalizeString(goals[0].type as string)}`} />
-            <ProfileInfo
-              title="Monthly goal"
-              info={(goals[0].monthly as string).toLocaleString()}
-            />
-            <ProfileInfo title="Yearly goal" info={(goals[0].yearly as string).toLocaleString()} />
+
+            {/* GOALS */}
+            <div className="d-flex justify-content-between align-items-center">
+              <ProfileInfo
+                title="Goal type"
+                info={`${capitalizeString(goals[0].type as string)}`}
+              />
+
+              <button className="btn btn-secondary has-icon d-flex flex-center">
+                <span className="material-icon inline-icon">edit</span>
+              </button>
+            </div>
+
+            <div className="d-flex justify-content-between align-items-center">
+              <ProfileInfo
+                title="Monthly goal"
+                info={(goals[0].monthly as string).toLocaleString()}
+              />
+
+              <button className="btn btn-secondary has-icon d-flex flex-center">
+                <span className="material-icon inline-icon">edit</span>
+              </button>
+            </div>
+
+            <div className="d-flex justify-content-between align-items-center">
+              <ProfileInfo
+                title="Yearly goal"
+                info={(goals[0].yearly as string).toLocaleString()}
+              />
+
+              <button className="btn btn-secondary has-icon d-flex flex-center">
+                <span className="material-icon inline-icon">edit</span>
+              </button>
+            </div>
           </section>
         </section>
       </section>

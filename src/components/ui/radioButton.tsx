@@ -10,11 +10,23 @@ type RadioButtonProps = {
   title: string;
   description?: string;
   options: inputOptions[];
+  setting?: string;
+  formName?: string;
+  onChange?: (setting: string, value: string) => void;
 };
 
-export default function RadioButton({ title, description, options }: RadioButtonProps) {
+export default function RadioButton({
+  title,
+  description,
+  options,
+  setting,
+  formName,
+  onChange,
+}: RadioButtonProps) {
+  const normalizedSetting = setting?.toString().replace(' ', '-');
+
   return (
-    <div className="d-flex flex-col gap-05">
+    <div id={formName} className="d-flex flex-col gap-05">
       <p className="bold">{title}</p>
       {description !== undefined ? <p className="tiny-text">{description}</p> : null}
       {options.map(option => {
@@ -26,6 +38,7 @@ export default function RadioButton({ title, description, options }: RadioButton
               name={option.name}
               type={option.type}
               className={`${styles.btn} btn btn-secondary`}
+              onClick={() => onChange?.(option.name)}
             >
               {option.label}
             </button>
@@ -34,8 +47,14 @@ export default function RadioButton({ title, description, options }: RadioButton
 
         return (
           <div key={option.name} className={`${styles.option} d-flex align-items-center gap-05`}>
-            <input id={option.name} name={option.name} type={option.type}></input>
-            <label htmlFor={option.name} className="regular small-text">
+            <input
+              id={option.name}
+              name={formName}
+              type={option.type}
+              defaultChecked={normalizedSetting == option.name}
+              onChange={() => onChange?.(formName, option.name)}
+            ></input>
+            <label htmlFor={option.name} className={`${styles.label} regular small-text w-fill`}>
               {option.label}
             </label>
           </div>
