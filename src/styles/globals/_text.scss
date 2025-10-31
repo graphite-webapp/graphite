@@ -77,3 +77,11 @@ h6 {
 .underline {
   text-decoration: underline;
 }
+
+.p {
+  font-size: var(--text-size);
+}
+
+.color-error {
+  color: var(--error) !important;
+}

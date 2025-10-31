@@ -329,6 +329,7 @@ export default function OverviewDetails({
                           icon: !isEditing ? 'delete' : 'cancel',
                           onClick: () =>
                             !isEditing ? deleteRow(Number(session.id)) : cancelEdit(),
+                          classes: ['color-error'],
                         },
                       ]}
                     />

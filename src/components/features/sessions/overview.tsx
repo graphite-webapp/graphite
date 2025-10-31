@@ -343,6 +343,7 @@ export default function Overview({
                                 text: !isEditing ? 'Delete session' : 'Cancel edit',
                                 icon: !isEditing ? 'delete' : 'cancel',
                                 onClick: () => (!isEditing ? deleteChapters(dayKey) : cancelEdit()),
+                                classes: ['color-error'],
                               },
                             ]}
                           />

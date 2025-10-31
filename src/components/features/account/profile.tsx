@@ -1,13 +1,10 @@
 import { BaseRow } from '@/types/db';
 import { useUser } from '@/lib/userContext';
 import { useHandleData } from '@/types/getData';
-// import Option from '@/components/ui/option';
-// import { redirect } from 'next/navigation';
 import Spinner from '@/components/ui/spinner';
 import ProfileInfo from '../../ui/profileInfo';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { capitalizeString } from '@/types/text';
-// import { profileEnd } from 'console';
 import Link from 'next/link';
 import styles from '@/styles/modules/profile.module.scss';
 import { AvatarDefault } from '@/assets/avatar_default';
@@ -17,6 +14,8 @@ import { getAvatarSize } from '@/types/styles';
 import React from 'react';
 import { handleSubmit } from '@/types/submitData';
 import { updateDisplayName } from '@/types/upsertData';
+import Submenu from '@/components/ui/submenu';
+import { deleteAvatar } from '@/types/deleteData';
 
 type ProfileProps = {
   goals: BaseRow[];
@@ -33,6 +32,8 @@ export default function ProfileDetails({
 }: ProfileProps) {
   const { currentUser, signOutUser, loading: userLoading } = useUser();
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [avatarMenuOpen, setAvatarMenuOpen] = useState(false);
+  const avatarButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const { data, loading: dataLoading } = useHandleData(
     'component',
@@ -138,15 +139,43 @@ export default function ProfileDetails({
               />
               {editingAllowed !== null && editingAllowed == true ? (
                 <React.Fragment>
-                  <label htmlFor="upload-avatar" className="btn-avatar d-flex flex-center">
-                    <span className="material-icon inline-icon">edit</span>
-                  </label>
-                  <input
-                    id="upload-avatar"
-                    type="file"
-                    onChange={uploadAvatar}
-                    accept="image/*"
-                    className="d-none"
+                  <button
+                    ref={avatarButtonRef}
+                    type="button"
+                    className="btn-avatar d-flex flex-center has-icon"
+                    onClick={() => setAvatarMenuOpen(prev => !prev)}
+                  >
+                    <span className="material-icon p">edit</span>
+                  </button>
+
+                  <Submenu
+                    open={avatarMenuOpen}
+                    onClose={() => setAvatarMenuOpen(false)}
+                    triggerEl={avatarButtonRef.current}
+                    options={[
+                      {
+                        text: 'Upload image',
+                        icon: 'upload',
+                        onClick: () => {
+                          const input = document.createElement('input');
+                          input.type = 'file';
+                          input.accept = 'image/*';
+                          input.onchange = uploadAvatar;
+                          input.click();
+                        },
+                      },
+                      {
+                        text: 'Remove avatar',
+                        icon: 'delete',
+                        onClick: async () => {
+                          if (currentUser?.id) {
+                            const success = await deleteAvatar(currentUser.id);
+                            if (success) location.reload();
+                          }
+                        },
+                        classes: ['color-error'],
+                      },
+                    ]}
                   />
                 </React.Fragment>
               ) : null}

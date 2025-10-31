@@ -7,6 +7,7 @@ type SubmenuOption = {
   text: string;
   icon: string;
   onClick?: () => void;
+  classes?: string[];
 };
 
 type SubmenuProps = {
@@ -71,7 +72,7 @@ export default function Submenu({ open, onClose, options, triggerEl }: SubmenuPr
           return (
             <button
               key={option.text.replace(' ', '-').toLowerCase()}
-              className={`${styles.menuBtn} btn has-icon d-flex flex-center gap-05`}
+              className={`${styles.menuBtn} ${Array.isArray(option.classes) ? option.classes.join(' ') : ''} btn has-icon d-flex flex-center gap-05`}
               type="button"
               onClick={() => {
                 option.onClick?.();
