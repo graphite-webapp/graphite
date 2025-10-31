@@ -24,7 +24,7 @@ type ProfileProps = {
   editingAllowed: boolean;
 };
 
-export default function ProfileDetails({
+export default function Profile({
   goals: initialGoals,
   profiles: initialProfiles,
   includeSettings,
