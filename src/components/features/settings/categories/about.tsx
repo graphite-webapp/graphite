@@ -16,6 +16,9 @@ export default function About() {
       {/* PRIVACY */}
       <p>Find out what we do with your data here.</p>
 
+      {/* BUG REPORT */}
+      <p>You can report bugs here.</p>
+
       {/* LINKS */}
       <div className="d-flex gap-1">
         <a className="bold text-link" href="https://discord.gg/exakJqYPHA" target="blank">
