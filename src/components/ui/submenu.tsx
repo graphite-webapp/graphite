@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useLayoutEffect, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import styles from '@/styles/modules/submenu.module.scss';
 
@@ -38,7 +38,7 @@ export default function Submenu({ open, onClose, options, triggerEl }: SubmenuPr
   }, [onClose, triggerEl, open]);
 
   // compute anchor position for portal placement whenever open changes or triggerEl changes
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (open && triggerEl) {
       const rect = triggerEl.getBoundingClientRect();
       setAnchor({ top: rect.bottom + window.scrollY, left: rect.left + window.scrollX });

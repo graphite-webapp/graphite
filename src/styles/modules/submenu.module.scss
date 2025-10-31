@@ -18,6 +18,18 @@
       display: flex;
     }
 
+    @media only screen and (max-width: $lg) {
+      position: fixed;
+      bottom: calc(
+        (0.5em * 2) + 3em
+      ); // Match navbar height (padding top + bottom + approximate content height)
+      top: auto;
+      min-width: 100vw;
+      width: 100vw;
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+      z-index: 1;
+    }
+
     .menuBtn {
       background-color: transparent;
       border: none;
@@ -33,6 +45,12 @@
         transform: none;
         font-weight: var(--bold-weight-text);
         background-color: var(--bg-dark);
+      }
+
+      @media only screen and (max-width: $lg) {
+        text-align: center;
+        justify-content: center;
+        width: 100%;
       }
     }
   }

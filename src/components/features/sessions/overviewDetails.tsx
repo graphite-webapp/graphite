@@ -108,7 +108,7 @@ export default function OverviewDetails({
       userId: currentUser.id,
       submitType: 'delete',
       table: dataTable,
-      recordId: Number(sessionId),
+      recordId: [Number(sessionId)],
     });
   };
 

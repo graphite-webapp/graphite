@@ -10,6 +10,9 @@ export default function About() {
       defaultCollapsed={false}
       containerClasses={['d-flex', 'flex-col', 'gap-05']}
     >
+      {/* BETA TESTER */}
+      <p>Sign up as a beta tester</p>
+
       {/* PRIVACY */}
       <p>Find out what we do with your data here.</p>
 

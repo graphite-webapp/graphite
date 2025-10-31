@@ -12,7 +12,7 @@ type handleSubmitParams = {
   userId: string;
   table: TableName;
   submitType: 'insert' | 'update' | 'delete';
-  recordId?: number | null;
+  recordId?: null | number[];
   form?: HTMLFormElement | HTMLElement | null;
   values?: submitValue[];
 };
@@ -125,7 +125,7 @@ export const handleSubmit = async ({
     }
   }
 
-  upsertData(table, [formData], table == 'settings' ? true : false);
+  await upsertData(table, [formData], table == 'settings' ? true : false);
   if (form instanceof HTMLFormElement) form.reset();
   location.reload();
 };

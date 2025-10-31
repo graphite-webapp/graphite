@@ -70,11 +70,11 @@ main {
   color: var(--bg);
   font-family: inherit;
 
-  p {
+  > * {
     flex: 1;
     text-align: left;
 
-    &:last-of-type {
+    &:last-child {
       flex: unset;
       text-align: right;
     }

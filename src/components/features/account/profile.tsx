@@ -77,7 +77,7 @@ export default function ProfileDetails({
     const avatarUrl = await upsertAvatar(currentUser?.id, file);
     if (avatarUrl == null) return;
 
-    upsertData(
+    await upsertData(
       'profiles',
       [
         {

@@ -43,3 +43,9 @@
 .dayBlock.detailsShown {
   box-shadow: var(--shadow-s);
 }
+
+.input {
+  width: auto;
+  min-width: 2ch;
+  max-width: 12ch;
+}

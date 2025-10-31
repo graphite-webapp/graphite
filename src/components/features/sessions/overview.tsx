@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useUser } from '@/lib/userContext';
 import { useHandleData } from '@/types/getData';
 import styles from '@/styles/modules/overview.module.scss';
@@ -7,6 +7,9 @@ import Spinner from '@/components/ui/spinner';
 import OverviewDetails from './overviewDetails';
 import { DataRow, groupData } from '@/types/formatData';
 import { sumDurations } from '@/types/dates';
+import Submenu from '@/components/ui/submenu';
+import { handleSubmit } from '@/types/submitData';
+import { upsertData } from '@/types/upsertData';
 
 type OverviewProps = {
   sessions: BaseRow[];
@@ -20,6 +23,15 @@ export default function Overview({
   showControlMenu = false,
 }: OverviewProps) {
   const { currentUser, loading: userLoading } = useUser();
+  const [editingRowId, setEditingRowId] = useState<number | boolean>(false);
+  const [activeSubmenuId, setActiveSubmenuId] = useState<number | null>(null);
+  const toggleButtonRefs = useRef<Record<number, HTMLButtonElement | null>>({});
+
+  const toggleSubmenu = (id: number) => {
+    setActiveSubmenuId(prev => (prev === id ? null : id));
+  };
+
+  const cancelEdit = () => setEditingRowId(false);
 
   const [dataTable, setDataTable] = useState<'sessions' | 'chapters'>(() => {
     const saved = localStorage.getItem('dataTable');
@@ -89,6 +101,67 @@ export default function Overview({
     });
   };
 
+  const editChapters = async (dayKey: string) => {
+    const currentData = sessions[dayKey].reduce(
+      (acc, session) => {
+        acc.ids.push(session.id);
+        acc.chapters += Number(session.chapter_completed ?? 0);
+        acc.date = session.date;
+        return acc;
+      },
+      { ids: [] as number[], date: '', chapters: 0 }
+    );
+
+    const dateVal = document.getElementById(`date-${dayKey}`).value;
+    const chaptersVal = Number(document.getElementById(`chapters-${dayKey}`).value);
+
+    let chaptersDiff = chaptersVal - currentData.chapters;
+
+    if (chaptersDiff < 0) {
+      const idsToDelete = currentData.ids.slice(0, Math.abs(chaptersDiff));
+
+      await handleSubmit({
+        userId: currentUser.id,
+        submitType: 'delete',
+        table: dataTable,
+        recordId: idsToDelete,
+      });
+      return;
+    }
+
+    if (chaptersDiff > 0) {
+      const newRows = Array.from({ length: chaptersDiff }, () => ({
+        user_id: currentUser.id,
+        date: dateVal,
+        chapter_completed: 1,
+      }));
+
+      await upsertData(dataTable, newRows);
+      location.reload();
+      return;
+    }
+
+    const updatedRows = currentData.ids.map(id => ({
+      id,
+      user_id: currentUser.id,
+      date: dateVal,
+    }));
+
+    await upsertData(dataTable, updatedRows);
+    location.reload();
+  };
+
+  const deleteChapters = async (dayKey: string) => {
+    const recordIds = sessions[dayKey].map(session => Number(session.id));
+
+    await handleSubmit({
+      userId: currentUser.id,
+      submitType: 'delete',
+      table: dataTable,
+      recordId: recordIds,
+    });
+  };
+
   return (
     <section className="info-block">
       <h3>{dataTable == 'sessions' ? 'Writing sessions' : 'Chapter sessions'}</h3>
@@ -123,101 +196,173 @@ export default function Overview({
                 <div className="header-block d-flex justify-content-between gap-1 flex-wrap align-items-center">
                   <p>Date</p>
                   <p>Chapters</p>
+                  <p> </p>
                 </div>
               )}
-              {Object.entries(sessions).map(([dayKey, daySessions]) => (
-                <div key={dayKey} className={styles.sessionContainer}>
-                  {dataTable == 'sessions' &&
-                  Array.isArray(daySessions) &&
-                  daySessions.length > 0 ? (
-                    <button
-                      className={`${styles.dayBlock} ${styles.containsDetails} ${!collapsedDays[dayKey] ? styles.detailsShown : ''} contains-details d-flex justify-content-between gap-1 w-fill day-block border-0 align-items-center`}
-                      onClick={() => toggleCollapse(dayKey)}
-                    >
-                      <p>
-                        {new Date(dayKey).toLocaleDateString(undefined, {
-                          weekday: 'short',
-                          month: 'short',
-                          day: 'numeric',
-                        })}
-                      </p>
+              {Object.entries(sessions).map(([dayKey, daySessions]) => {
+                const isEditing = editingRowId === dayKey;
 
-                      <p>
-                        {daySessions
-                          .reduce(
-                            (sum: number, session: DataRow) =>
-                              sum + Number(session.words_written ?? 0),
-                            0
-                          )
-                          .toLocaleString()}{' '}
-                        words
-                      </p>
-                      <p>
-                        {Math.round(
-                          daySessions.reduce(
-                            (sum: number, session: DataRow) => sum + Number(session.wpm ?? 0),
-                            0
-                          ) / daySessions.length
-                        ).toLocaleString()}{' '}
-                        WPM
-                      </p>
+                return (
+                  <div key={dayKey} className={styles.sessionContainer}>
+                    {dataTable == 'sessions' &&
+                    Array.isArray(daySessions) &&
+                    daySessions.length > 0 ? (
+                      <button
+                        className={`${styles.dayBlock} ${styles.containsDetails} ${!collapsedDays[dayKey] ? styles.detailsShown : ''} contains-details d-flex justify-content-between gap-1 w-fill day-block border-0 align-items-center`}
+                        onClick={() => toggleCollapse(dayKey)}
+                      >
+                        <p>
+                          {new Date(dayKey).toLocaleDateString(undefined, {
+                            weekday: 'short',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </p>
 
-                      <p>
-                        {sumDurations(
-                          daySessions.map((session: DataRow) => session.session_duration as string)
+                        <p>
+                          {daySessions
+                            .reduce(
+                              (sum: number, session: DataRow) =>
+                                sum + Number(session.words_written ?? 0),
+                              0
+                            )
+                            .toLocaleString()}{' '}
+                          words
+                        </p>
+                        <p>
+                          {Math.round(
+                            daySessions.reduce(
+                              (sum: number, session: DataRow) => sum + Number(session.wpm ?? 0),
+                              0
+                            ) / daySessions.length
+                          ).toLocaleString()}{' '}
+                          WPM
+                        </p>
+
+                        <p>
+                          {sumDurations(
+                            daySessions.map(
+                              (session: DataRow) => session.session_duration as string
+                            )
+                          )}
+                        </p>
+
+                        <p>
+                          <span className="material-icon">
+                            {(collapsedDays[dayKey] ?? true) ? 'expand_more' : 'expand_less'}
+                          </span>
+                        </p>
+                      </button>
+                    ) : (
+                      <div
+                        className={`${styles.dayBlock} d-flex justify-content-between gap-1 day-block flex-wrap border-0 align-items-center`}
+                      >
+                        {isEditing ? (
+                          <div>
+                            <input
+                              id={`date-${dayKey}`}
+                              type="date"
+                              defaultValue={
+                                typeof dayKey === 'string'
+                                  ? new Date(dayKey).toISOString().split('T')[0]
+                                  : ''
+                              }
+                              className={styles.input}
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            <p>
+                              {new Date(dayKey).toLocaleDateString(undefined, {
+                                weekday: 'short',
+                                month: 'short',
+                                day: 'numeric',
+                              })}
+                            </p>
+                          </div>
                         )}
-                      </p>
 
-                      <p>
-                        <span className="material-icon">
-                          {(collapsedDays[dayKey] ?? true) ? 'expand_more' : 'expand_less'}
-                        </span>
-                      </p>
-                    </button>
-                  ) : (
-                    <button
-                      className={`${styles.dayBlock} d-flex justify-content-between gap-1 day-block flex-wrap border-0 w-fill  align-items-center`}
-                      onClick={() => toggleCollapse(dayKey)}
-                    >
-                      <p>
-                        {new Date(dayKey).toLocaleDateString(undefined, {
-                          weekday: 'short',
-                          month: 'short',
-                          day: 'numeric',
-                        })}
-                      </p>
+                        <div className="d-flex align-items-center gap-1ch">
+                          {isEditing ? (
+                            <input
+                              id={`chapters-${dayKey}`}
+                              type="number"
+                              defaultValue={daySessions.reduce(
+                                (sum: number, session: DataRow) =>
+                                  sum + Number(session.chapter_completed ?? 0),
+                                0
+                              )}
+                              className={styles.input}
+                            />
+                          ) : (
+                            <p>
+                              {daySessions
+                                .reduce(
+                                  (sum: number, session: DataRow) =>
+                                    sum + Number(session.chapter_completed ?? 0),
+                                  0
+                                )
+                                .toLocaleString()}
+                            </p>
+                          )}
+                          <p>
+                            {daySessions.reduce(
+                              (sum: number, session: DataRow) =>
+                                sum + Number(session.chapter_completed ?? 0),
+                              0
+                            ) > 1
+                              ? ' chapters'
+                              : ' chapter'}
+                          </p>
+                        </div>
 
-                      <p>
-                        {daySessions
-                          .reduce(
-                            (sum: number, session: DataRow) =>
-                              sum + Number(session.chapter_completed ?? 0),
-                            0
-                          )
-                          .toLocaleString()}
-                        {daySessions.reduce(
-                          (sum: number, session: DataRow) =>
-                            sum + Number(session.chapter_completed ?? 0),
-                          0
-                        ) > 1
-                          ? ' chapters'
-                          : ' chapter'}
-                      </p>
-                    </button>
-                  )}
+                        <div>
+                          <button
+                            className="no-button"
+                            type="button"
+                            onClick={() => toggleSubmenu(dayKey)}
+                            ref={el => {
+                              toggleButtonRefs.current[dayKey] = el;
+                            }}
+                          >
+                            <span className="material-icon inline-icon">more_horiz</span>
+                          </button>
 
-                  {dataTable == 'sessions' ? (
-                    <div>
-                      <OverviewDetails
-                        collapsed={collapsedDays[dayKey] ?? true}
-                        dataTable={dataTable}
-                        headers={headers}
-                        sessions={daySessions}
-                      />
-                    </div>
-                  ) : null}
-                </div>
-              ))}
+                          <Submenu
+                            triggerEl={toggleButtonRefs.current[dayKey]}
+                            open={activeSubmenuId === dayKey}
+                            onClose={() => setActiveSubmenuId(null)}
+                            options={[
+                              {
+                                text: !isEditing ? 'Edit session' : 'Submit edit',
+                                icon: !isEditing ? 'edit' : 'check_circle',
+                                onClick: () =>
+                                  !isEditing ? setEditingRowId(dayKey) : editChapters(dayKey),
+                              },
+                              {
+                                text: !isEditing ? 'Delete session' : 'Cancel edit',
+                                icon: !isEditing ? 'delete' : 'cancel',
+                                onClick: () => (!isEditing ? deleteChapters(dayKey) : cancelEdit()),
+                              },
+                            ]}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {dataTable == 'sessions' ? (
+                      <div>
+                        <OverviewDetails
+                          collapsed={collapsedDays[dayKey] ?? true}
+                          dataTable={dataTable}
+                          headers={headers}
+                          sessions={daySessions}
+                        />
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              })}
             </div>
           </section>
         </>
