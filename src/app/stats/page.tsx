@@ -20,8 +20,8 @@ export default function Stats({ isMain = true }) {
 
   useEffect(() => {
     if (!userLoading && !currentUser) redirect('/login');
-    if (!userLoading && currentUser) updateMetadata({ title: `Graphite | Stats` });
-  }, [currentUser, userLoading, updateMetadata]);
+    if (!userLoading && currentUser && isMain) updateMetadata({ title: `Graphite | Stats` });
+  }, [currentUser, userLoading, updateMetadata, isMain]);
 
   const { data, loading: dataLoading } = useHandleData({
     src: 'page',
