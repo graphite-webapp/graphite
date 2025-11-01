@@ -1,11 +1,15 @@
 import { Metadata } from 'next';
 import ClientLayout from './clientLayout';
+import { MetadataProvider } from '@/lib/metadata';
 
 export const metadata: Metadata = {
-  title: 'Graphite',
-  icons: {
-    icon: '/favicon.svg',
-  },
+  icons: [
+    {
+      rel: 'icon',
+      type: 'image/svg+xml',
+      url: '/favicon.svg',
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -13,5 +17,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <ClientLayout>{children}</ClientLayout>;
+  return (
+    <MetadataProvider>
+      <ClientLayout>{children}</ClientLayout>
+    </MetadataProvider>
+  );
 }

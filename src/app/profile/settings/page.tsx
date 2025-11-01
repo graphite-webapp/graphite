@@ -3,17 +3,18 @@ import { redirect } from 'next/navigation';
 import { useUser } from '@/lib/userContext';
 import { useEffect } from 'react';
 import { useHandleData } from '@/types/getData';
-// import Profile from '@/components/features/account/profileDetails';
-// import ProfileDetails from '@/components/features/account/profile';
 import Settings from '@/components/features/settings/settings';
 import Spinner from '@/components/ui/spinner';
+import { useMetadata } from '@/lib/metadata';
 
 export default function PageSettings() {
   const { currentUser, loading: userLoading } = useUser();
+  const { updateMetadata } = useMetadata();
 
   useEffect(() => {
     if (!userLoading && !currentUser) redirect('/login');
-  }, [currentUser, userLoading]);
+    if (!userLoading && currentUser) updateMetadata({ title: `Graphite | Settings` });
+  }, [currentUser, userLoading, updateMetadata]);
 
   const { data, loading: dataLoading } = useHandleData({
     src: 'page',

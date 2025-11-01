@@ -11,14 +11,17 @@ import ChaptersCompleted from '@/components/features/charts/chapterscompleted';
 import styles from '@/styles/modules/stats.module.scss';
 import Spinner from '@/components/ui/spinner';
 import UserLoading from '@/components/ui/userLoading';
+import { useMetadata } from '@/lib/metadata';
 
 export default function Stats({ isMain = true }) {
   const Tag = isMain ? 'main' : 'section';
   const { currentUser, loading: userLoading } = useUser();
+  const { updateMetadata } = useMetadata();
 
   useEffect(() => {
     if (!userLoading && !currentUser) redirect('/login');
-  }, [currentUser, userLoading]);
+    if (!userLoading && currentUser) updateMetadata({ title: `Graphite | Stats` });
+  }, [currentUser, userLoading, updateMetadata]);
 
   const { data, loading: dataLoading } = useHandleData({
     src: 'page',

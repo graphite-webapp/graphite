@@ -8,13 +8,17 @@ import Settings from '@/components/features/settings/settings';
 import Spinner from '@/components/ui/spinner';
 import styles from '@/styles/modules/profile.module.scss';
 import UserLoading from '@/components/ui/userLoading';
+import { useMetadata } from '@/lib/metadata';
 
 export default function ProfileSettings() {
   const { currentUser, loading: userLoading } = useUser();
+  const { updateMetadata } = useMetadata();
 
   useEffect(() => {
     if (!userLoading && !currentUser) redirect('/login');
-  }, [currentUser, userLoading]);
+    if (!userLoading && currentUser)
+      updateMetadata({ title: `Graphite | ${currentUser.user_metadata.display_name}` });
+  }, [currentUser, userLoading, updateMetadata]);
 
   const { data, loading: dataLoading } = useHandleData({
     src: 'page',
