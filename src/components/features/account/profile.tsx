@@ -35,17 +35,17 @@ export default function Profile({
   const [avatarMenuOpen, setAvatarMenuOpen] = useState(false);
   const avatarButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  const { data, loading: dataLoading } = useHandleData(
-    'component',
-    currentUser?.id,
-    ['goals', 'profiles'],
-    null,
-    null,
-    {
+  const { data, loading: dataLoading } = useHandleData({
+    src: 'component',
+    userId: currentUser?.id,
+    tables: [{ table: 'goals' }, { table: 'profiles' }],
+    start: null,
+    end: null,
+    initialData: {
       goals: initialGoals,
       profiles: initialProfiles,
-    }
-  );
+    },
+  });
 
   const goals = data.goals || [];
   const profileData = data.profiles || [];

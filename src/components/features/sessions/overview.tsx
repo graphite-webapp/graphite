@@ -48,14 +48,15 @@ export default function Overview({
   const startPeriod = new Date(date.getFullYear(), 0, 1);
   const endPeriod = new Date(date.getFullYear() + 1, 0, 0);
 
-  const { data, loading: dataLoading } = useHandleData(
-    'component',
-    currentUser?.id,
-    ['sessions', 'chapters'],
-    startPeriod,
-    endPeriod,
-    { sessions: initialSessions, chapters: initialChapters }
-  );
+  const { data, loading: dataLoading } = useHandleData({
+    src: 'component',
+    userId: currentUser?.id,
+    tables: [
+      { table: 'sessions', orderBy: 'date', startPeriod: startPeriod, endPeriod: endPeriod },
+      { table: 'chapters', orderBy: 'date', startPeriod: startPeriod, endPeriod: endPeriod },
+    ],
+    initialData: { sessions: initialSessions, chapters: initialChapters },
+  });
 
   const sessions = groupData(data[dataTable] as DataRow[], 'date');
   const groupsKeys = Object.keys(sessions);

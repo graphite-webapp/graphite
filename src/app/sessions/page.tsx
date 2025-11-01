@@ -14,10 +14,14 @@ export default function Sessions() {
     if (!userLoading && !currentUser) redirect('/login');
   }, [currentUser, userLoading]);
 
-  const { data, loading: dataLoading } = useHandleData('page', currentUser?.id, [
-    'sessions',
-    'chapters',
-  ]);
+  const { data, loading: dataLoading } = useHandleData({
+    src: 'page',
+    userId: currentUser?.id,
+    tables: [
+      { table: 'sessions', orderBy: 'date' },
+      { table: 'chapters', orderBy: 'date' },
+    ],
+  });
 
   if (dataLoading || !currentUser || userLoading) {
     if (userLoading) return <UserLoading />;

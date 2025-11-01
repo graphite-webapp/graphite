@@ -16,16 +16,16 @@ export default function ChaptersCompleted({ chapters: initialChapters }: Chapter
   const startPeriod = new Date(date.getFullYear(), 0, 1);
   const endPeriod = new Date(date.getFullYear() + 1, 0, 0);
 
-  const { data, loading: dataLoading } = useHandleData(
-    'component',
-    currentUser?.id,
-    ['chapters'],
-    startPeriod,
-    endPeriod,
-    {
+  const { data, loading: dataLoading } = useHandleData({
+    src: 'component',
+    userId: currentUser?.id,
+    tables: [
+      { table: 'chapters', orderBy: 'date', startPeriod: startPeriod, endPeriod: endPeriod },
+    ],
+    initialData: {
       chapters: initialChapters,
-    }
-  );
+    },
+  });
 
   const chapters = aggregateData(data.chapters as DataRow[], 'month', {
     chapter_completed: 'sum',

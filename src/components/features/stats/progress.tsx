@@ -27,14 +27,15 @@ export default function Progress({
     endPeriod = new Date(date.getFullYear(), date.getMonth() + 1, 0);
   }
 
-  const { data, loading } = useHandleData(
-    'component',
-    currentUser?.id,
-    ['sessions', 'goals'],
-    startPeriod,
-    endPeriod,
-    { sessions: initialSessions, goals: initialGoals }
-  );
+  const { data, loading } = useHandleData({
+    src: 'component',
+    userId: currentUser?.id,
+    tables: [
+      { table: 'sessions', orderBy: 'date', startPeriod: startPeriod, endPeriod: endPeriod },
+      { table: 'goals' },
+    ],
+    initialData: { sessions: initialSessions, goals: initialGoals },
+  });
 
   const sessions = data.sessions || [];
   const goals = data.goals || [];

@@ -11,7 +11,11 @@ import Spinner from '@/components/ui/spinner';
 export default function Settings({ source }) {
   const { currentUser, loading: userLoading } = useUser();
 
-  const { data, loading: dataLoading } = useHandleData('component', currentUser?.id, ['settings']);
+  const { data, loading: dataLoading } = useHandleData({
+    src: 'component',
+    userId: currentUser?.id,
+    tables: [{ table: 'settings' }],
+  });
 
   if (!currentUser || userLoading || dataLoading || data.sessions?.length == 0) {
     return (

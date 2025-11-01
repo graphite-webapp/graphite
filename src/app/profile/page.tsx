@@ -16,10 +16,11 @@ export default function ProfileSettings() {
     if (!userLoading && !currentUser) redirect('/login');
   }, [currentUser, userLoading]);
 
-  const { data, loading: dataLoading } = useHandleData('page', currentUser?.id, [
-    'goals',
-    'profiles',
-  ]);
+  const { data, loading: dataLoading } = useHandleData({
+    src: 'page',
+    userId: currentUser?.id,
+    tables: [{ table: 'goals' }, { table: 'profiles' }],
+  });
 
   if (dataLoading || !currentUser || userLoading) {
     if (userLoading) return <UserLoading />;

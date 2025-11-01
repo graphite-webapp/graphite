@@ -12,7 +12,13 @@ export default function NavBar() {
   const active = usePathname();
   const { currentUser, loading: userLoading } = useUser();
 
-  const { data } = useHandleData('component', currentUser?.id, ['profiles'], null, null);
+  const { data } = useHandleData({
+    src: 'component',
+    userId: currentUser?.id,
+    tables: [{ table: 'profiles' }],
+    start: null,
+    end: null,
+  });
 
   const profileData = data.profiles || [];
 

@@ -20,11 +20,15 @@ export default function Stats({ isMain = true }) {
     if (!userLoading && !currentUser) redirect('/login');
   }, [currentUser, userLoading]);
 
-  const { data, loading: dataLoading } = useHandleData('page', currentUser?.id, [
-    'sessions',
-    'chapters',
-    'goals',
-  ]);
+  const { data, loading: dataLoading } = useHandleData({
+    src: 'page',
+    userId: currentUser?.id,
+    tables: [
+      { table: 'sessions', orderBy: 'date' },
+      { table: 'chapters', orderBy: 'date' },
+      { table: 'goals' },
+    ],
+  });
 
   if (dataLoading || !currentUser || userLoading) {
     if (isMain && userLoading) return <UserLoading />;

@@ -23,16 +23,16 @@ export default function WordCount({ sessions: initialSessions }: WordCountProps)
   const startPeriod = new Date(date.getFullYear(), 0, 1);
   const endPeriod = new Date(date.getFullYear() + 1, 0, 0);
 
-  const { data, loading } = useHandleData(
-    'component',
-    currentUser?.id,
-    ['sessions'],
-    startPeriod,
-    endPeriod,
-    {
+  const { data, loading } = useHandleData({
+    src: 'component',
+    userId: currentUser?.id,
+    tables: [
+      { table: 'sessions', orderBy: 'date', startPeriod: startPeriod, endPeriod: endPeriod },
+    ],
+    initialData: {
       sessions: initialSessions,
-    }
-  );
+    },
+  });
 
   const sessions = data.sessions || [];
 
