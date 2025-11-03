@@ -1,8 +1,8 @@
 import { supabase } from '@/lib/supabaseClient';
-import { type TableName } from './db';
+import { type TableName } from './svg';
 import { upsertData } from './upsertData';
 
-export async function deleteData(table: TableName, id: number, userId: string) {
+export async function deleteData(table: TableName, id: number[], userId: string) {
   const { error } = await supabase.from(table).delete().in('id', id).eq('user_id', userId);
   if (error) {
     console.error('There was a problem signing up.', error);
@@ -30,13 +30,9 @@ export async function deleteAvatar(userId: string) {
       if (deleteError) throw deleteError;
     }
 
-    const { data: publicUrlData, error: urlError } = supabase.storage
+    const { data: publicUrlData } = supabase.storage
       .from('avatars/default')
       .getPublicUrl('avatar.png');
-
-    console.log(publicUrlData);
-
-    if (urlError) throw urlError;
 
     const defaultAvatarUrl = publicUrlData.publicUrl;
 

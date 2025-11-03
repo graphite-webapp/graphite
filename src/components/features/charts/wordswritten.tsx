@@ -1,8 +1,8 @@
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { useUser } from '@/lib/userContext';
-import { useHandleData } from '@/types/getData';
+import { useFetchData } from '@/types/getData';
 import { DataRow, aggregateData } from '@/types/formatData';
-import { BaseRow } from '@/types/db';
+import { BaseRow } from '@/types/svg';
 import Spinner from '@/components/ui/spinner';
 
 type WordsWrittenProps = {
@@ -16,19 +16,19 @@ export default function WordsWritten({ sessions: initialSessions }: WordsWritten
   const startPeriod = new Date(date.getFullYear(), 0, 1);
   const endPeriod = new Date(date.getFullYear() + 1, 0, 0);
 
-  const { data, loading } = useHandleData(
-    'component',
-    currentUser?.id,
-    ['sessions'],
-    startPeriod,
-    endPeriod,
-    {
+  const { data, loading } = useFetchData({
+    src: 'component',
+    userId: currentUser?.id,
+    tables: [
+      { table: 'sessions', orderBy: 'date', startPeriod: startPeriod, endPeriod: endPeriod },
+    ],
+    initialData: {
       sessions: initialSessions,
-    }
-  );
+    },
+  });
 
   const sessions =
-    data.sessions && data.sessions.length > 0
+    data.sessions.length > 0
       ? aggregateData(data.sessions as DataRow[], 'month', {
           words_written: 'sum',
         })

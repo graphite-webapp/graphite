@@ -1,6 +1,6 @@
 import { upsertData } from '@/types/upsertData';
 import { deleteData } from '@/types/deleteData';
-import { TableName } from './db';
+import { TableName } from './svg';
 
 export type submitValue = {
   key: string;

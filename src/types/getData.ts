@@ -1,155 +1,152 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { type TableName, BaseRow } from './db';
+import { Database, Tables } from './supabase';
+import { PostgrestError } from '@supabase/supabase-js';
 
-export type FetchDataResult = {
-  sessions?: BaseRow[];
-  chapters?: BaseRow[];
-  goals?: BaseRow[];
-  profiles?: BaseRow[];
-  settings?: BaseRow[];
+type TableQueryOptions<Table extends keyof Database['public']['Tables']> = {
+  select?: string;
+  eq?: Partial<Tables<Table>>;
+  neq?: Partial<Tables<Table>>;
+  gt?: Partial<Tables<Table>>;
+  gte?: Partial<Tables<Table>>;
+  lt?: Partial<Tables<Table>>;
+  lte?: Partial<Tables<Table>>;
+  like?: Partial<Record<keyof Tables<Table>, string>>;
+  ilike?: Partial<Record<keyof Tables<Table>, string>>;
+  in?: Partial<Record<keyof Tables<Table>, unknown[]>>;
+  order?: { column: keyof Tables<Table>; ascending?: boolean }[];
+  limit?: number;
+  range?: [from: number, to: number];
 };
 
-export async function getData(
-  table: TableName,
-  userId: string | null = null,
-  startPeriod: Date | null = null,
-  endPeriod: Date | null = null
-) {
-  const { data, error } = await supabase
-    .from(table)
-    .select()
-    .eq('user_id', userId)
-    .order(
-      table !== 'goals' && table !== 'profiles' && table !== 'settings' ? 'date' : 'created_at',
-      { ascending: true }
+type TableRequest<Table extends keyof Database['public']['Tables']> = {
+  table: Table;
+  options?: TableQueryOptions<Table>;
+};
+
+export async function getData<Table extends keyof Database['public']['Tables']>(
+  request: TableRequest<Table>
+): Promise<{ data: Tables<Table>[] | null; error: PostgrestError | null }> {
+  const { table, options = {} as TableQueryOptions<Table> } = request;
+
+  let query = supabase.from(table).select(options.select ?? '*');
+
+  if (options.eq)
+    Object.entries(options.eq).forEach(([k, v]) => v != null && (query = query.eq(k, v)));
+  if (options.neq)
+    Object.entries(options.neq).forEach(([k, v]) => v != null && (query = query.neq(k, v)));
+  if (options.gt)
+    Object.entries(options.gt).forEach(([k, v]) => v != null && (query = query.gt(k, v)));
+  if (options.gte)
+    Object.entries(options.gte).forEach(([k, v]) => v != null && (query = query.gte(k, v)));
+  if (options.lt)
+    Object.entries(options.lt).forEach(([k, v]) => v != null && (query = query.lt(k, v)));
+  if (options.lte)
+    Object.entries(options.lte).forEach(([k, v]) => v != null && (query = query.lte(k, v)));
+
+  if (options.like)
+    Object.entries(options.like).forEach(
+      ([k, v]) => typeof v === 'string' && v.length > 0 && (query = query.like(k, v))
+    );
+  if (options.ilike)
+    Object.entries(options.ilike).forEach(
+      ([k, v]) => typeof v === 'string' && v.length > 0 && (query = query.ilike(k, v))
+    );
+  if (options.in)
+    Object.entries(options.in).forEach(
+      ([k, v]) => Array.isArray(v) && v.length > 0 && (query = query.in(k, v))
     );
 
-  if (error || data == null) {
-    console.error('There was a problem signing up.', error);
-    return { success: false, error };
-  }
+  if (options.order)
+    options.order.forEach(
+      ({ column, ascending = true }) => (query = query.order(column as string, { ascending }))
+    );
+  if (options.range) query = query.range(options.range[0], options.range[1]);
+  if (options.limit != null) query = query.limit(options.limit);
 
-  let filteredData = data;
-  if (startPeriod !== null && endPeriod !== null) {
-    filteredData = data.filter(row => {
-      const baseRow = row as BaseRow;
-
-      const dateStr =
-        typeof baseRow.date == 'string'
-          ? baseRow.date
-          : typeof baseRow.created_at == 'string'
-            ? baseRow.created_at
-            : null;
-
-      if (dateStr === null || dateStr === '') return false;
-
-      const rowDate = new Date(dateStr);
-      return rowDate >= startPeriod && rowDate <= endPeriod;
-    });
-  }
-
-  return { success: true, data: filteredData };
+  const { data, error } = await query;
+  return { data: (data as Tables<Table>[] | null) ?? null, error };
 }
 
-export async function collectData(
-  userId: string,
-  tables: TableName[] = [],
-  start: Date | null = null,
-  end: Date | null = null
-): Promise<Partial<FetchDataResult>> {
-  const result: Partial<FetchDataResult> = {};
-
-  if (tables.includes('sessions')) {
-    const sessionData = await getData('sessions', userId, start ?? null, end ?? null);
-    if (sessionData.success) result.sessions = sessionData.data;
-  }
-
-  if (tables.includes('chapters')) {
-    const chapterData = await getData('chapters', userId, start ?? null, end ?? null);
-    if (chapterData.success) result.chapters = chapterData.data;
-  }
-
-  if (tables.includes('goals')) {
-    const goalData = await getData('goals', userId);
-    if (goalData.success) result.goals = goalData.data;
-  }
-
-  if (tables.includes('profiles')) {
-    const profileData = await getData('profiles', userId);
-    if (profileData.success) result.profiles = profileData.data;
-  }
-
-  if (tables.includes('settings')) {
-    const profileData = await getData('settings', userId);
-    if (profileData.success) result.settings = profileData.data;
-  }
-
-  return result;
-}
-
-export function useHandleData(
-  src: 'page' | 'component',
-  userId: string | undefined,
-  tables: TableName[],
-  start: Date | null = null,
-  end: Date | null = null,
-  initialData: Partial<Record<TableName, BaseRow[]>> = {}
-) {
-  const [data, setData] = useState<Partial<Record<TableName, BaseRow[]>>>(initialData);
-  const [loading, setLoading] = useState(
-    userId === null ||
-      userId === undefined ||
-      userId === '' ||
-      Object.keys(initialData).length === 0
-  );
-  const [fetched, setFetched] = useState(false);
-
-  const filterByDateRange = (
-    rows: BaseRow[],
-    start: Date | null = null,
-    end: Date | null = null
-  ) => {
-    if (!start || !end) return rows;
-
-    return rows.filter(row => {
-      const dateField = (row.date ?? row.created_at) as string | undefined;
-      if (dateField === null || dateField === undefined || dateField === '') return false;
-      const rowDate = new Date(dateField);
-      return rowDate >= start && rowDate <= end;
-    });
+type useFetchDataOptions<
+  TTables extends readonly TableRequest<keyof Database['public']['Tables']>[],
+> = {
+  userId?: string | null;
+  tables: TTables;
+  initialData?: {
+    [K in TTables[number]['table']]?: Tables<K>[];
   };
+  transform?: (data: {
+    [K in TTables[number]['table']]: Tables<K>[];
+  }) => {
+    [K in TTables[number]['table']]: Tables<K>[];
+  };
+  refetchDeps?: unknown[];
+  src?: string;
+};
+
+export function useFetchData<
+  TTables extends readonly TableRequest<keyof Database['public']['Tables']>[],
+>({
+  userId,
+  tables,
+  initialData = {},
+  transform,
+  refetchDeps = [],
+  src = 'page',
+}: useFetchDataOptions<TTables>) {
+  type TableMap = { [K in TTables[number]['table']]: Tables<K>[] };
+
+  const [data, setData] = useState<Partial<TableMap>>(initialData);
+  const [loading, setLoading] = useState<boolean>(
+    userId == null || Object.keys(initialData).length === 0
+  );
+  const [fetched, setFetched] = useState<boolean>(false);
+  const refetchKey = JSON.stringify(refetchDeps);
 
   useEffect(() => {
-    if (userId === null || userId === undefined || userId === '' || fetched) return;
-
-    const missingTables = tables.filter(table => !initialData[table]);
+    if (userId == null || fetched) return;
 
     const run = async () => {
       setLoading(true);
-      if (missingTables.length === 0 && src == 'component') {
-        const filtered: Partial<Record<TableName, BaseRow[]>> = {};
+      const fetchedData = {} as Partial<TableMap>;
 
-        if (initialData.sessions)
-          filtered.sessions = filterByDateRange(initialData.sessions, start ?? null, end ?? null);
+      for (const t of tables) {
+        const eqWithUserId = t.options?.eq
+          ? { ...t.options.eq, user_id: userId }
+          : { user_id: userId };
 
-        if (initialData.chapters)
-          filtered.chapters = filterByDateRange(initialData.chapters, start ?? null, end ?? null);
+        const { data: tableData, error } = await getData({
+          table: t.table,
+          options: { ...t.options, eq: eqWithUserId },
+        });
 
-        if (initialData.goals) filtered.goals = initialData.goals;
+        if (error) console.error(`Error fetching table ${t.table}:`, error);
 
-        setData(filtered);
-      } else {
-        const fetched = await collectData(userId, missingTables, start ?? null, end ?? null);
-        setData(prev => ({ ...prev, ...fetched }));
+        const key = t.table as TTables[number]['table'];
+        fetchedData[key] = (Array.isArray(tableData) ? tableData : []) as Tables<typeof key>[];
       }
 
+      let merged = {
+        ...(initialData as TableMap),
+        ...(fetchedData as TableMap),
+      };
+
+      if (transform) merged = transform(merged);
+
+      setData(merged);
       setFetched(true);
       setLoading(false);
     };
 
-    run();
-  }, [userId, start, end, tables, initialData, fetched, src]);
+    void run();
+  }, [userId, src, fetched, tables, initialData, transform, refetchKey]);
 
-  return { data, loading };
+  return { data, loading, refetch: () => setFetched(false) };
+}
+
+export function makeTableRequest<Table extends keyof Database['public']['Tables']>(
+  req: TableRequest<Table>
+): TableRequest<Table> {
+  return req;
 }

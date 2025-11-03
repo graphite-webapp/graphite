@@ -3,21 +3,21 @@ import SettingsCategory from '../settingsCategory';
 import { handleSubmit } from '@/types/submitData';
 import { useUser } from '@/lib/userContext';
 
-export default function Data({ settings }) {
-  const { currentUser, loading: userLoading, settings: userSettings, setSetting } = useUser();
+export default function Data() {
+  const { currentUser, settings, setSetting } = useUser();
 
-  const upsertSetting = async (setting, value) => {
+  const upsertSetting = async (key: string, value: string) => {
     if (!currentUser) return;
 
-    if (setting == 'data-calc') setSetting('data_calc', value.replace('-', ' '));
+    if (key == 'data-calc') setSetting('data_calc', value.replace('-', ' '));
 
-    const form = document.getElementById(setting);
+    const form = document.getElementById(key);
     await handleSubmit({
       userId: currentUser.id,
       submitType: 'update',
       table: 'settings',
       form,
-      values: [{ key: setting.replace('-', '_'), id: '#' + value, type: 'radio' }],
+      values: [{ key: key.replace('-', '_'), id: '#' + value, type: 'radio' }],
     });
   };
 

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from '@/styles/modules/navbar.module.scss';
 import { AvatarDefault } from '@/assets/avatar_default';
-import { useHandleData } from '@/types/getData';
+import { useFetchData } from '@/types/getData';
 import Image from 'next/image';
 import { useUser } from '@/lib/userContext';
 import { getAvatarSize } from '@/types/styles';
@@ -12,9 +12,13 @@ export default function NavBar() {
   const active = usePathname();
   const { currentUser, loading: userLoading } = useUser();
 
-  const { data } = useHandleData('component', currentUser?.id, ['profiles'], null, null);
+  const { data } = useFetchData({
+    src: 'component',
+    userId: currentUser?.id,
+    tables: [{ table: 'profiles' }],
+  });
 
-  const profileData = data.profiles || [];
+  const profileData = data.profiles ?? [];
 
   const avatarSize = getAvatarSize('class', '.nav-avatar-container');
 

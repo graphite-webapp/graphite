@@ -2,18 +2,17 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import { Session, User, AuthError } from '@supabase/supabase-js';
-type SettingsType = {
-  [key: string]: any; // dynamic settings keys like 'theme', 'data_calc', etc.
+
+export type SettingsType = {
+  [key: string]: string | number | boolean | null;
 };
 
 type UserContextType = {
   currentUser: User | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
   loading: boolean;
-  // theme: string;
-  // setTheme: React.Dispatch<React.SetStateAction<string>>;
   settings: SettingsType;
-  setSetting: (key: string, value: any) => Promise<void>;
+  setSetting: (key: string, value: string | number | boolean | null) => Promise<void>;
   signUpNewUser: (
     email: string,
     password: string,
@@ -87,7 +86,7 @@ export default function UserProvider({ children }: UserProviderProps) {
     setCurrentUser(null);
   };
 
-  const setSetting = async (key: string, value: any) => {
+  const setSetting = async (key: string, value: string | number | boolean | null) => {
     if (!currentUser) return;
 
     // Update local state first
@@ -101,15 +100,16 @@ export default function UserProvider({ children }: UserProviderProps) {
 
   useEffect(() => {
     const getSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      setCurrentUser(data?.session?.user ?? null);
+      const { data: sessionData } = await supabase.auth.getSession();
+      const user = sessionData?.session?.user ?? null;
+      setCurrentUser(user);
 
-      if (data?.session?.user?.id) {
+      if (user && user.id) {
         const { data: settingsData } = await supabase
           .from('settings')
           .select('*')
-          .eq('user_id', data.session.user.id)
-          .single();
+          .eq('user_id', user.id)
+          .single<{ user_id: string } & SettingsType>();
         setSettings(settingsData ?? {});
       }
       setLoading(false);

@@ -1,13 +1,13 @@
 import { useUser } from '@/lib/userContext';
-import { useHandleData } from '@/types/getData';
-import { BaseRow } from '@/types/db';
+import { useFetchData, makeTableRequest } from '@/types/getData';
+import { Tables } from '@/types/supabase';
 import Spinner from '@/components/ui/spinner';
-import { aggregateData, DataRow } from '@/types/formatData';
+import { aggregateData } from '@/types/formatData';
 
 type GlanceProps = {
   monthOffset: string;
-  sessions: BaseRow[];
-  chapters: BaseRow[];
+  sessions: Tables<'sessions'>[];
+  chapters: Tables<'chapters'>[];
 };
 
 export default function Glance({
@@ -25,29 +25,44 @@ export default function Glance({
   const startPeriod = new Date(date.getFullYear(), date.getMonth());
   const endPeriod = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
-  const { data, loading: dataLoading } = useHandleData(
-    'component',
-    currentUser?.id,
-    ['sessions', 'chapters'],
-    startPeriod,
-    endPeriod,
-    { sessions: initialSessions, chapters: initialChapters }
-  );
+  const { data, loading: dataLoading } = useFetchData({
+    src: 'component',
+    userId: currentUser?.id,
+    tables: [
+      makeTableRequest({
+        table: 'sessions',
+        options: {
+          order: [{ column: 'date', ascending: true }],
+          gte: { date: startPeriod.toISOString().split('T')[0] },
+          lte: { date: endPeriod.toISOString().split('T')[0] },
+        },
+      }),
+      makeTableRequest({
+        table: 'chapters',
+        options: {
+          order: [{ column: 'date', ascending: true }],
+          gte: { date: startPeriod.toISOString().split('T')[0] },
+          lte: { date: endPeriod.toISOString().split('T')[0] },
+        },
+      }),
+    ] as const,
+    initialData: { sessions: initialSessions, chapters: initialChapters },
+  });
 
   if (!currentUser || userLoading) {
     return <Spinner />;
   }
 
-  let sessions = data.sessions || [];
+  let sessions = data.sessions ?? [];
   if (settings.data_calc == 'per day') {
-    sessions = aggregateData(sessions as DataRow[], 'day', {
+    sessions = aggregateData<'sessions'>(sessions, 'day', {
       start_count: 'min',
       end_count: 'max',
       words_written: 'sum',
       wpm: 'avg',
     });
   }
-  const chapters = data.chapters || [];
+  const chapters = data.chapters ?? [];
 
   let sessionsDone = true;
 

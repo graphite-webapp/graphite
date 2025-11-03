@@ -1,7 +1,7 @@
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { useUser } from '@/lib/userContext';
-import { BaseRow } from '@/types/db';
-import { useHandleData } from '@/types/getData';
+import { BaseRow } from '@/types/svg';
+import { useFetchData } from '@/types/getData';
 import { DataRow, aggregateData } from '@/types/formatData';
 import Spinner from '@/components/ui/spinner';
 
@@ -16,16 +16,16 @@ export default function ChaptersCompleted({ chapters: initialChapters }: Chapter
   const startPeriod = new Date(date.getFullYear(), 0, 1);
   const endPeriod = new Date(date.getFullYear() + 1, 0, 0);
 
-  const { data, loading: dataLoading } = useHandleData(
-    'component',
-    currentUser?.id,
-    ['chapters'],
-    startPeriod,
-    endPeriod,
-    {
+  const { data, loading: dataLoading } = useFetchData({
+    src: 'component',
+    userId: currentUser?.id,
+    tables: [
+      { table: 'chapters', orderBy: 'date', startPeriod: startPeriod, endPeriod: endPeriod },
+    ],
+    initialData: {
       chapters: initialChapters,
-    }
-  );
+    },
+  });
 
   const chapters = aggregateData(data.chapters as DataRow[], 'month', {
     chapter_completed: 'sum',

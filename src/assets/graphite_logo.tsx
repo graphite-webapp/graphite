@@ -1,5 +1,5 @@
 'use client';
-import { SvgProps } from '@/types/db';
+import { SvgProps } from '@/types/svg';
 
 export const GraphiteLogo = ({ classes }: SvgProps) => {
   return (
@@ -9,6 +9,7 @@ export const GraphiteLogo = ({ classes }: SvgProps) => {
       viewBox="0 0 574 574"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      className={classes !== undefined && classes.length > 0 ? classes.join(' ') : ''}
     >
       <mask
         id="mask0_37_481"

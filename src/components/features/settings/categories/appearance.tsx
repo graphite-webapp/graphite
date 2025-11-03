@@ -3,21 +3,23 @@ import SettingsCategory from '../settingsCategory';
 import { handleSubmit } from '@/types/submitData';
 import { useUser } from '@/lib/userContext';
 
-export default function Appearance({ settings }) {
-  const { currentUser, loading: userLoading, setting, setSetting } = useUser();
+export default function Appearance() {
+  const { currentUser, settings, setSetting } = useUser();
 
-  const upsertSetting = async (setting, value) => {
+  const upsertSetting = async (key: string, value: string) => {
     if (!currentUser) return;
 
-    if (setting == 'theme') setSetting('theme', value.replace('-', ' '));
+    if (key == 'theme') setSetting('theme', value.replace('-', ' '));
 
-    const form = document.getElementById(setting);
+    const form = document.getElementById(key) as HTMLFormElement | null;
+    if (!form) return;
+
     await handleSubmit({
       userId: currentUser.id,
       submitType: 'update',
       table: 'settings',
       form,
-      values: [{ key: setting.replace('-', '_'), id: '#' + value, type: 'radio' }],
+      values: [{ key: key.replace('-', '_'), id: '#' + value, type: 'radio' }],
     });
   };
 

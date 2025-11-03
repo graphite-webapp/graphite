@@ -1,6 +1,15 @@
 import SettingsCategory from '../settingsCategory';
+import { useUser } from '@/lib/userContext';
+import { redirect } from 'next/navigation';
 
 export default function Account() {
+  const { signOutUser } = useUser();
+
+  const handleSignOut = async () => {
+    await signOutUser();
+    redirect('/login');
+  };
+
   return (
     <SettingsCategory
       title="Account"
@@ -16,7 +25,9 @@ export default function Account() {
         <button className="btn btn-secondary">Change password</button>
       </div>
       <div className={`d-flex flex-col gap-05`}>
-        <button className="btn btn-tertiary-error">Log out</button>
+        <button className="btn btn-tertiary-error" onClick={handleSignOut}>
+          Log out
+        </button>
         <button className="btn btn-tertiary-error">Delete account</button>
       </div>
     </SettingsCategory>

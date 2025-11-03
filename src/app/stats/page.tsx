@@ -2,7 +2,8 @@
 import { redirect } from 'next/navigation';
 import { useUser } from '@/lib/userContext';
 import { useEffect } from 'react';
-import { useHandleData } from '@/types/getData';
+import { useFetchData, makeTableRequest } from '@/types/getData';
+import { useMetadata } from '@/lib/metadata';
 import Glance from '@/components/features/stats/glance';
 import Progress from '@/components/features/stats/progress';
 import WordCount from '@/components/features/charts/wordcount';
@@ -15,16 +16,32 @@ import UserLoading from '@/components/ui/userLoading';
 export default function Stats({ isMain = true }) {
   const Tag = isMain ? 'main' : 'section';
   const { currentUser, loading: userLoading } = useUser();
+  const { updateMetadata } = useMetadata();
 
   useEffect(() => {
     if (!userLoading && !currentUser) redirect('/login');
-  }, [currentUser, userLoading]);
+    if (!userLoading && currentUser && isMain) updateMetadata({ title: `Graphite | Stats` });
+  }, [currentUser, userLoading, updateMetadata, isMain]);
 
-  const { data, loading: dataLoading } = useHandleData('page', currentUser?.id, [
-    'sessions',
-    'chapters',
-    'goals',
-  ]);
+  const { data, loading: dataLoading } = useFetchData({
+    src: 'page',
+    userId: currentUser?.id,
+    tables: [
+      makeTableRequest({
+        table: 'sessions',
+        options: {
+          order: [{ column: 'date', ascending: true }],
+        },
+      }),
+      makeTableRequest({
+        table: 'chapters',
+        options: {
+          order: [{ column: 'date', ascending: true }],
+        },
+      }),
+      makeTableRequest({ table: 'goals' }),
+    ],
+  });
 
   if (dataLoading || !currentUser || userLoading) {
     if (isMain && userLoading) return <UserLoading />;

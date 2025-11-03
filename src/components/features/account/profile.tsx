@@ -1,6 +1,6 @@
-import { BaseRow } from '@/types/db';
+import { BaseRow } from '@/types/svg';
 import { useUser } from '@/lib/userContext';
-import { useHandleData } from '@/types/getData';
+import { useFetchData } from '@/types/getData';
 import Spinner from '@/components/ui/spinner';
 import ProfileInfo from '../../ui/profileInfo';
 import { useState, useRef } from 'react';
@@ -24,31 +24,29 @@ type ProfileProps = {
   editingAllowed: boolean;
 };
 
-export default function ProfileDetails({
+export default function Profile({
   goals: initialGoals,
   profiles: initialProfiles,
   includeSettings,
   editingAllowed,
 }: ProfileProps) {
-  const { currentUser, signOutUser, loading: userLoading } = useUser();
+  const { currentUser, loading: userLoading } = useUser();
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [avatarMenuOpen, setAvatarMenuOpen] = useState(false);
   const avatarButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  const { data, loading: dataLoading } = useHandleData(
-    'component',
-    currentUser?.id,
-    ['goals', 'profiles'],
-    null,
-    null,
-    {
+  const { data } = useFetchData({
+    src: 'component',
+    userId: currentUser?.id,
+    tables: [{ table: 'goals' }, { table: 'profiles' }],
+    initialData: {
       goals: initialGoals,
       profiles: initialProfiles,
-    }
-  );
+    },
+  });
 
-  const goals = data.goals || [];
-  const profileData = data.profiles || [];
+  const goals = data.goals ?? [];
+  const profileData = data.profiles ?? [];
 
   if (!currentUser || userLoading || profileData.length == 0) {
     return (
@@ -68,7 +66,7 @@ export default function ProfileDetails({
 
   const avatarSize = getAvatarSize('id', 'avatar');
 
-  const uploadAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const uploadAvatar = async (e: Event) => {
     if (!currentUser?.id) return;
 
     const target = e.target as HTMLInputElement;
@@ -106,7 +104,7 @@ export default function ProfileDetails({
       userId: currentUser.id,
       submitType: 'update',
       table: 'profiles',
-      recordId: profileData[0].id,
+      recordId: [profileData[0].id ?? 0],
       form,
       values: [
         { key: 'bio', id: '#bio', type: 'text' },
