@@ -1,6 +1,6 @@
 import { useUser } from '@/lib/userContext';
-import { useHandleData } from '@/types/getData';
-import { BaseRow } from '@/types/db';
+import { useFetchData } from '@/types/getData';
+import { BaseRow } from '@/types/svg';
 import Spinner from '@/components/ui/spinner';
 
 type ProgressProps = {
@@ -27,7 +27,7 @@ export default function Progress({
     endPeriod = new Date(date.getFullYear(), date.getMonth() + 1, 0);
   }
 
-  const { data, loading } = useHandleData({
+  const { data, loading } = useFetchData({
     src: 'component',
     userId: currentUser?.id,
     tables: [
@@ -37,8 +37,8 @@ export default function Progress({
     initialData: { sessions: initialSessions, goals: initialGoals },
   });
 
-  const sessions = data.sessions || [];
-  const goals = data.goals || [];
+  const sessions = data.sessions ?? [];
+  const goals = data.goals ?? [];
 
   if (!currentUser || loading) {
     return (

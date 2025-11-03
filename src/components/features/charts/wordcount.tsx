@@ -8,8 +8,8 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { useUser } from '@/lib/userContext';
-import { useHandleData } from '@/types/getData';
-import { BaseRow } from '@/types/db';
+import { useFetchData } from '@/types/getData';
+import { BaseRow } from '@/types/svg';
 import Spinner from '@/components/ui/spinner';
 
 type WordCountProps = {
@@ -23,7 +23,7 @@ export default function WordCount({ sessions: initialSessions }: WordCountProps)
   const startPeriod = new Date(date.getFullYear(), 0, 1);
   const endPeriod = new Date(date.getFullYear() + 1, 0, 0);
 
-  const { data, loading } = useHandleData({
+  const { data, loading } = useFetchData({
     src: 'component',
     userId: currentUser?.id,
     tables: [
@@ -34,7 +34,7 @@ export default function WordCount({ sessions: initialSessions }: WordCountProps)
     },
   });
 
-  const sessions = data.sessions || [];
+  const sessions = data.sessions ?? [];
 
   if (!currentUser || loading) {
     return (

@@ -3,15 +3,24 @@ import { useUser } from '@/lib/userContext';
 import { handleSubmit } from '@/types/submitData';
 import styles from '@/styles/modules/submitSession.module.scss';
 import Spinner from '@/components/ui/spinner';
-import { useHandleData } from '@/types/getData';
+import { useFetchData, makeTableRequest } from '@/types/getData';
+import { Tables } from '@/types/supabase';
 
 export default function SubmitSession() {
   const { currentUser, loading: userLoading } = useUser();
 
-  const { data, loading: dataLoading } = useHandleData({
+  const { data, loading: dataLoading } = useFetchData({
     src: 'component',
     userId: currentUser?.id,
-    tables: [{ table: 'sessions', orderBy: 'date', ascending: 0, limit: 1 }],
+    tables: [
+      makeTableRequest({
+        table: 'sessions',
+        options: {
+          order: [{ column: 'date', ascending: false }],
+          limit: 1,
+        },
+      }),
+    ] as const,
   });
 
   if (!currentUser || userLoading)
@@ -24,9 +33,9 @@ export default function SubmitSession() {
       </section>
     );
 
-  let prevSession = null;
-  if (!dataLoading && data.sessions.length > 0) {
-    prevSession = data.sessions[0];
+  let prevSession: Tables<'sessions'> | null = null;
+  if (!dataLoading && data.sessions && data.sessions.length > 0) {
+    prevSession = data.sessions[0] as unknown as Tables<'sessions'>;
   }
 
   const insertRow = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -85,7 +94,11 @@ export default function SubmitSession() {
           <input
             id="chapter"
             type="text"
-            defaultValue={prevSession !== null ? prevSession.chapter.join(', ') : ''}
+            defaultValue={
+              prevSession !== null && Array.isArray(prevSession.chapter)
+                ? (prevSession.chapter as number[]).join(', ')
+                : ''
+            }
           ></input>
         </div>
         <button className="btn btn-primary" type="submit">

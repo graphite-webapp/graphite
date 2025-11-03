@@ -10,9 +10,9 @@ type RadioButtonProps = {
   title: string;
   description?: string;
   options: inputOptions[];
-  setting?: string;
+  setting?: string | number | boolean | null;
   formName?: string;
-  onChange?: (setting: string, value: string) => void;
+  onChange?: (key: string, value: string) => void;
 };
 
 export default function RadioButton({
@@ -38,7 +38,7 @@ export default function RadioButton({
               name={option.name}
               type={option.type}
               className={`${styles.btn} btn btn-secondary`}
-              onClick={() => onChange?.(option.name)}
+              onClick={() => onChange?.(formName ?? '', option.name)}
             >
               {option.label}
             </button>
@@ -52,7 +52,7 @@ export default function RadioButton({
               name={formName}
               type={option.type}
               defaultChecked={normalizedSetting == option.name}
-              onChange={() => onChange?.(formName, option.name)}
+              onChange={() => onChange?.(formName ?? '', option.name)}
             ></input>
             <label htmlFor={option.name} className={`${styles.label} regular small-text w-fill`}>
               {option.label}

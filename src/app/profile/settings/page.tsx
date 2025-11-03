@@ -2,7 +2,6 @@
 import { redirect } from 'next/navigation';
 import { useUser } from '@/lib/userContext';
 import { useEffect } from 'react';
-import { useHandleData } from '@/types/getData';
 import Settings from '@/components/features/settings/settings';
 import Spinner from '@/components/ui/spinner';
 import { useMetadata } from '@/lib/metadata';
@@ -16,13 +15,7 @@ export default function PageSettings() {
     if (!userLoading && currentUser) updateMetadata({ title: `Graphite | Settings` });
   }, [currentUser, userLoading, updateMetadata]);
 
-  const { data, loading: dataLoading } = useHandleData({
-    src: 'page',
-    userId: currentUser?.id,
-    tables: [{ table: 'goals' }, { table: 'profiles' }],
-  });
-
-  if (dataLoading || !currentUser || userLoading)
+  if (!currentUser || userLoading)
     return (
       <main className={`d-flex flex-center`}>
         <Spinner />

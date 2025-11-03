@@ -1,19 +1,19 @@
 import { useState, useRef } from 'react';
 import { useUser } from '@/lib/userContext';
-import { useHandleData } from '@/types/getData';
+import { useFetchData, makeTableRequest } from '@/types/getData';
+import { Tables } from '@/types/supabase';
 import styles from '@/styles/modules/overview.module.scss';
-import { BaseRow } from '@/types/db';
 import Spinner from '@/components/ui/spinner';
 import OverviewDetails from './overviewDetails';
-import { DataRow, groupData } from '@/types/formatData';
+import { groupData } from '@/types/formatData';
 import { sumDurations } from '@/types/dates';
 import Submenu from '@/components/ui/submenu';
 import { handleSubmit } from '@/types/submitData';
 import { upsertData } from '@/types/upsertData';
 
 type OverviewProps = {
-  sessions: BaseRow[];
-  chapters: BaseRow[];
+  sessions: Tables<'sessions'>[];
+  chapters: Tables<'chapters'>[];
   showControlMenu: boolean;
 };
 
@@ -23,11 +23,11 @@ export default function Overview({
   showControlMenu = false,
 }: OverviewProps) {
   const { currentUser, loading: userLoading } = useUser();
-  const [editingRowId, setEditingRowId] = useState<number | boolean>(false);
-  const [activeSubmenuId, setActiveSubmenuId] = useState<number | null>(null);
-  const toggleButtonRefs = useRef<Record<number, HTMLButtonElement | null>>({});
+  const [editingRowId, setEditingRowId] = useState<string | boolean>(false);
+  const [activeSubmenuId, setActiveSubmenuId] = useState<string | null>(null);
+  const toggleButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
-  const toggleSubmenu = (id: number) => {
+  const toggleSubmenu = (id: string) => {
     setActiveSubmenuId(prev => (prev === id ? null : id));
   };
 
@@ -48,17 +48,34 @@ export default function Overview({
   const startPeriod = new Date(date.getFullYear(), 0, 1);
   const endPeriod = new Date(date.getFullYear() + 1, 0, 0);
 
-  const { data, loading: dataLoading } = useHandleData({
+  const { data, loading: dataLoading } = useFetchData({
     src: 'component',
     userId: currentUser?.id,
     tables: [
-      { table: 'sessions', orderBy: 'date', startPeriod: startPeriod, endPeriod: endPeriod },
-      { table: 'chapters', orderBy: 'date', startPeriod: startPeriod, endPeriod: endPeriod },
-    ],
+      makeTableRequest({
+        table: 'sessions',
+        options: {
+          order: [{ column: 'date', ascending: true }],
+          gte: { date: startPeriod.toISOString().split('T')[0] },
+          lte: { date: endPeriod.toISOString().split('T')[0] },
+        },
+      }),
+      makeTableRequest({
+        table: 'chapters',
+        options: {
+          order: [{ column: 'date', ascending: true }],
+          gte: { date: startPeriod.toISOString().split('T')[0] },
+          lte: { date: endPeriod.toISOString().split('T')[0] },
+        },
+      }),
+    ] as const,
     initialData: { sessions: initialSessions, chapters: initialChapters },
   });
 
-  const sessions = groupData(data[dataTable] as DataRow[], 'date');
+  const sessions =
+    dataTable === 'sessions'
+      ? groupData<'sessions'>(data.sessions ?? [], 'date')
+      : groupData<'chapters'>(data.chapters ?? [], 'date');
   const groupsKeys = Object.keys(sessions);
 
   if (!currentUser || userLoading) {
@@ -103,9 +120,10 @@ export default function Overview({
   };
 
   const editChapters = async (dayKey: string) => {
-    const currentData = sessions[dayKey].reduce(
+    const chaptersSessions = sessions[dayKey] as Tables<'chapters'>[];
+    const currentData = chaptersSessions.reduce(
       (acc, session) => {
-        acc.ids.push(session.id);
+        acc.ids.push(Number(session.id));
         acc.chapters += Number(session.chapter_completed ?? 0);
         acc.date = session.date;
         return acc;
@@ -113,10 +131,15 @@ export default function Overview({
       { ids: [] as number[], date: '', chapters: 0 }
     );
 
-    const dateVal = document.getElementById(`date-${dayKey}`).value;
-    const chaptersVal = Number(document.getElementById(`chapters-${dayKey}`).value);
+    const dateInput = document.getElementById(`date-${dayKey}`) as HTMLInputElement | null;
+    const chaptersInput = document.getElementById(`chapters-${dayKey}`) as HTMLInputElement | null;
 
-    let chaptersDiff = chaptersVal - currentData.chapters;
+    if (!dateInput || !chaptersInput) return;
+
+    const dateVal = dateInput.value;
+    const chaptersVal = Number(chaptersInput.value);
+
+    const chaptersDiff = chaptersVal - currentData.chapters;
 
     if (chaptersDiff < 0) {
       const idsToDelete = currentData.ids.slice(0, Math.abs(chaptersDiff));
@@ -222,8 +245,8 @@ export default function Overview({
 
                         <p>
                           {daySessions
-                            .reduce(
-                              (sum: number, session: DataRow) =>
+                            .reduce<number>(
+                              (sum, session: Tables<'sessions'>) =>
                                 sum + Number(session.words_written ?? 0),
                               0
                             )
@@ -233,7 +256,8 @@ export default function Overview({
                         <p>
                           {Math.round(
                             daySessions.reduce(
-                              (sum: number, session: DataRow) => sum + Number(session.wpm ?? 0),
+                              (sum: number, session: Tables<'sessions'>) =>
+                                sum + Number(session.wpm ?? 0),
                               0
                             ) / daySessions.length
                           ).toLocaleString()}{' '}
@@ -243,7 +267,7 @@ export default function Overview({
                         <p>
                           {sumDurations(
                             daySessions.map(
-                              (session: DataRow) => session.session_duration as string
+                              (session: Tables<'sessions'>) => session.session_duration as string
                             )
                           )}
                         </p>
@@ -288,28 +312,25 @@ export default function Overview({
                             <input
                               id={`chapters-${dayKey}`}
                               type="number"
-                              defaultValue={daySessions.reduce(
-                                (sum: number, session: DataRow) =>
-                                  sum + Number(session.chapter_completed ?? 0),
+                              defaultValue={(daySessions as Tables<'chapters'>[]).reduce<number>(
+                                (sum, session) => sum + Number(session.chapter_completed ?? 0),
                                 0
                               )}
                               className={styles.input}
                             />
                           ) : (
                             <p>
-                              {daySessions
-                                .reduce(
-                                  (sum: number, session: DataRow) =>
-                                    sum + Number(session.chapter_completed ?? 0),
+                              {(daySessions as Tables<'chapters'>[])
+                                .reduce<number>(
+                                  (sum, session) => sum + Number(session.chapter_completed ?? 0),
                                   0
                                 )
                                 .toLocaleString()}
                             </p>
                           )}
                           <p>
-                            {daySessions.reduce(
-                              (sum: number, session: DataRow) =>
-                                sum + Number(session.chapter_completed ?? 0),
+                            {(daySessions as Tables<'chapters'>[]).reduce<number>(
+                              (sum, session) => sum + Number(session.chapter_completed ?? 0),
                               0
                             ) > 1
                               ? ' chapters'
@@ -358,7 +379,7 @@ export default function Overview({
                           collapsed={collapsedDays[dayKey] ?? true}
                           dataTable={dataTable}
                           headers={headers}
-                          sessions={daySessions}
+                          sessions={daySessions as Tables<'sessions'>[]}
                         />
                       </div>
                     ) : null}

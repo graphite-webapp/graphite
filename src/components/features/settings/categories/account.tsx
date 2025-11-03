@@ -3,7 +3,7 @@ import { useUser } from '@/lib/userContext';
 import { redirect } from 'next/navigation';
 
 export default function Account() {
-  const { currentUser, signOutUser, loading: userLoading } = useUser();
+  const { signOutUser } = useUser();
 
   const handleSignOut = async () => {
     await signOutUser();

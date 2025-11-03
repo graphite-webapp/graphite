@@ -2,7 +2,7 @@
 import { redirect } from 'next/navigation';
 import { useUser } from '@/lib/userContext';
 import { useEffect } from 'react';
-import { useHandleData } from '@/types/getData';
+import { useFetchData } from '@/types/getData';
 import Profile from '@/components/features/account/profile';
 import Settings from '@/components/features/settings/settings';
 import Spinner from '@/components/ui/spinner';
@@ -20,7 +20,7 @@ export default function ProfileSettings() {
       updateMetadata({ title: `Graphite | ${currentUser.user_metadata.display_name}` });
   }, [currentUser, userLoading, updateMetadata]);
 
-  const { data, loading: dataLoading } = useHandleData({
+  const { data, loading: dataLoading } = useFetchData({
     src: 'page',
     userId: currentUser?.id,
     tables: [{ table: 'goals' }, { table: 'profiles' }],

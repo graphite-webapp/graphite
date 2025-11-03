@@ -2,7 +2,8 @@
 import { redirect } from 'next/navigation';
 import { useUser } from '@/lib/userContext';
 import { useEffect } from 'react';
-import { useHandleData } from '@/types/getData';
+import { useFetchData, makeTableRequest } from '@/types/getData';
+import { useMetadata } from '@/lib/metadata';
 import Glance from '@/components/features/stats/glance';
 import Progress from '@/components/features/stats/progress';
 import WordCount from '@/components/features/charts/wordcount';
@@ -11,7 +12,6 @@ import ChaptersCompleted from '@/components/features/charts/chapterscompleted';
 import styles from '@/styles/modules/stats.module.scss';
 import Spinner from '@/components/ui/spinner';
 import UserLoading from '@/components/ui/userLoading';
-import { useMetadata } from '@/lib/metadata';
 
 export default function Stats({ isMain = true }) {
   const Tag = isMain ? 'main' : 'section';
@@ -23,13 +23,23 @@ export default function Stats({ isMain = true }) {
     if (!userLoading && currentUser && isMain) updateMetadata({ title: `Graphite | Stats` });
   }, [currentUser, userLoading, updateMetadata, isMain]);
 
-  const { data, loading: dataLoading } = useHandleData({
+  const { data, loading: dataLoading } = useFetchData({
     src: 'page',
     userId: currentUser?.id,
     tables: [
-      { table: 'sessions', orderBy: 'date' },
-      { table: 'chapters', orderBy: 'date' },
-      { table: 'goals' },
+      makeTableRequest({
+        table: 'sessions',
+        options: {
+          order: [{ column: 'date', ascending: true }],
+        },
+      }),
+      makeTableRequest({
+        table: 'chapters',
+        options: {
+          order: [{ column: 'date', ascending: true }],
+        },
+      }),
+      makeTableRequest({ table: 'goals' }),
     ],
   });
 

@@ -1,24 +1,24 @@
 import React from 'react';
 import { useState, useRef } from 'react';
 import { handleSubmit, submitValue } from '@/types/submitData';
+import { Tables } from '@/types/supabase';
 import { useUser } from '@/lib/userContext';
 import Submenu from '@/components/ui/submenu';
 import styles from '@/styles/modules/overviewDetails.module.scss';
-import { BaseRow, TableName } from '@/types/db';
 
-type OverviewDetailsProps = {
+type OverviewDetailsProps<T extends 'sessions'> = {
   collapsed: boolean;
-  dataTable: TableName;
+  dataTable: T;
   headers: string[];
-  sessions: BaseRow[];
+  sessions: Tables<T>[];
 };
 
-export default function OverviewDetails({
+export default function OverviewDetails<T extends 'sessions'>({
   collapsed,
   dataTable,
   headers,
   sessions,
-}: OverviewDetailsProps) {
+}: OverviewDetailsProps<T>) {
   const { currentUser, loading: userLoading } = useUser();
   const [editingRowId, setEditingRowId] = useState<number | boolean>(false);
   const [activeSubmenuId, setActiveSubmenuId] = useState<number | null>(null);
@@ -26,40 +26,6 @@ export default function OverviewDetails({
 
   const toggleSubmenu = (id: number) => {
     setActiveSubmenuId(prev => (prev === id ? null : id));
-  };
-
-  const insertRow = async (e: React.FormEvent<HTMLFormElement>) => {
-    if (!currentUser || userLoading) return;
-    e.preventDefault();
-    const form = e.currentTarget;
-
-    let editValues: submitValue[] = [
-      { key: 'date', id: '#date', type: 'text' },
-      { key: 'start_time', id: '#start-time', type: 'text' },
-      { key: 'end_time', id: '#end-time', type: 'text' },
-      { key: 'start_count', id: '#start-count', type: 'text' },
-      { key: 'end_count', id: '#end-count', type: 'text' },
-      { key: 'words_written', id: '', type: 'number' },
-      { key: 'session_duration', id: '', type: 'text' },
-      { key: 'wpm', id: '', type: 'number' },
-      { key: 'chapter', id: '#chapter', type: 'array' },
-    ];
-
-    if (dataTable == 'chapters') {
-      editValues = [
-        { key: 'date', id: `#date`, type: 'text' },
-        { key: 'chapter_completed', id: `#chapter-completed`, type: 'number' },
-      ];
-    }
-
-    await handleSubmit({
-      userId: currentUser.id,
-      submitType: 'insert',
-      table: dataTable,
-      recordId: null,
-      form,
-      values: editValues,
-    });
   };
 
   const editRow = (sessionId: number) => setEditingRowId(sessionId);
@@ -82,18 +48,16 @@ export default function OverviewDetails({
       { key: 'chapter', id: `#chapter-${sessionId}`, type: 'array' },
     ];
 
-    if (dataTable == 'chapters') {
-      editValues = [
-        { key: 'date', id: `#date-${sessionId}`, type: 'text' },
-        { key: 'chapter_completed', id: `#chapter-completed-${sessionId}`, type: 'number' },
-      ];
-    }
+    editValues = [
+      { key: 'date', id: `#date-${sessionId}`, type: 'text' },
+      { key: 'chapter_completed', id: `#chapter-completed-${sessionId}`, type: 'number' },
+    ];
 
     await handleSubmit({
       userId: currentUser.id,
       submitType: 'update',
       table: dataTable,
-      recordId: Number(sessionId),
+      recordId: [Number(sessionId)],
       form: row,
       values: editValues,
     });
@@ -113,10 +77,7 @@ export default function OverviewDetails({
   };
 
   return (
-    <form
-      className={`${collapsed ? 'collapsed' : 'show d-flex'} ${styles.form}`}
-      onSubmit={insertRow}
-    >
+    <form className={`${collapsed ? 'collapsed' : 'show d-flex'} ${styles.form}`}>
       <div className={styles.table}>
         <div className={styles.thead}>
           <div className={styles.tr}>
@@ -169,8 +130,8 @@ export default function OverviewDetails({
                     </React.Fragment>
                   ) : null}
                   {headers.map(header => {
-                    const value = session[header as keyof typeof session];
-                    let displayValue = value;
+                    const value = session[header as keyof typeof session] as unknown;
+                    let displayValue = value as string | number | null;
                     const headerTitle = (header as string).toLowerCase();
                     const withSpaces = (header as string).replace(/(_)/g, ' ');
                     let formattedHeader =

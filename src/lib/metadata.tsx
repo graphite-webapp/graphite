@@ -1,5 +1,5 @@
 'use client';
-import { ReactNode, createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 type OpenGraphType = 'article' | 'book' | 'music' | 'video' | 'website' | 'profile';
 
@@ -11,7 +11,15 @@ interface ClientMetadata {
   authors?: { name: string; url?: string }[];
   generator?: string;
   keywords?: string[];
-  referrer?: 'no-referrer' | 'origin' | 'no-referrer-when-downgrade' | 'origin-when-cross-origin' | 'same-origin' | 'strict-origin' | 'strict-origin-when-cross-origin' | 'unsafe-url';
+  referrer?:
+    | 'no-referrer'
+    | 'origin'
+    | 'no-referrer-when-downgrade'
+    | 'origin-when-cross-origin'
+    | 'same-origin'
+    | 'strict-origin'
+    | 'strict-origin-when-cross-origin'
+    | 'unsafe-url';
   themeColor?: string;
   colorScheme?: 'normal' | 'dark' | 'light';
   viewport?: string;
@@ -140,36 +148,65 @@ export function MetadataProvider({ children }: { children: React.ReactNode }) {
     };
 
     // Helper to safely merge with defaults
-    const mergeWithDefault = <T>(value: T | undefined, defaultValue: T | undefined): T | undefined => {
+    function mergeWithDefault<T>(value: T | undefined, defaultValue: T | undefined): T | undefined {
       return typeof value !== 'undefined' ? value : defaultValue;
-    };
+    }
 
     // Basic metadata
     const title = mergeWithDefault(document.title || undefined, defaultMetadata.title);
-    const description = mergeWithDefault(getMetaContent("meta[name='description']"), defaultMetadata.description);
+    const description = mergeWithDefault(
+      getMetaContent("meta[name='description']"),
+      defaultMetadata.description
+    );
     const keywordsContent = getMetaContent("meta[name='keywords']");
-    const keywords = typeof keywordsContent === 'string' ? keywordsContent.split(',').map(k => k.trim()) : defaultMetadata.keywords;
-    const themeColor = mergeWithDefault(getMetaContent("meta[name='theme-color']"), defaultMetadata.themeColor);
-    const viewport = mergeWithDefault(getMetaContent("meta[name='viewport']"), defaultMetadata.viewport);
-    
+    const keywords =
+      typeof keywordsContent === 'string'
+        ? keywordsContent.split(',').map(k => k.trim())
+        : defaultMetadata.keywords;
+    const themeColor = mergeWithDefault(
+      getMetaContent("meta[name='theme-color']"),
+      defaultMetadata.themeColor
+    );
+    const viewport = mergeWithDefault(
+      getMetaContent("meta[name='viewport']"),
+      defaultMetadata.viewport
+    );
+
     // OpenGraph
     const defaultOG = defaultMetadata.openGraph || {};
     const ogTitle = mergeWithDefault(getMetaContent("meta[property='og:title']"), defaultOG.title);
-    const ogDescription = mergeWithDefault(getMetaContent("meta[property='og:description']"), defaultOG.description);
+    const ogDescription = mergeWithDefault(
+      getMetaContent("meta[property='og:description']"),
+      defaultOG.description
+    );
     const ogTypeContent = getMetaContent("meta[property='og:type']");
     const ogType = mergeWithDefault(ogTypeContent as OpenGraphType | undefined, defaultOG.type);
     const ogUrl = mergeWithDefault(getMetaContent("meta[property='og:url']"), defaultOG.url);
-    const ogSiteName = mergeWithDefault(getMetaContent("meta[property='og:site_name']"), defaultOG.siteName);
-    
+    const ogSiteName = mergeWithDefault(
+      getMetaContent("meta[property='og:site_name']"),
+      defaultOG.siteName
+    );
+
     // Twitter
     const defaultTwitter = defaultMetadata.twitter || {};
     const twitterCard = mergeWithDefault(
-      getMetaContent("meta[name='twitter:card']") as ("summary" | "summary_large_image" | "app" | "player" | undefined),
+      getMetaContent("meta[name='twitter:card']") as
+        | 'summary'
+        | 'summary_large_image'
+        | 'app'
+        | 'player'
+        | undefined,
       defaultTwitter.card
     );
-    const twitterTitle = mergeWithDefault(getMetaContent("meta[name='twitter:title']"), defaultTwitter.title);
-    const twitterDescription = mergeWithDefault(getMetaContent("meta[name='twitter:description']"), defaultTwitter.description);
-    
+    const twitterTitle = mergeWithDefault(
+      getMetaContent("meta[name='twitter:title']"),
+      defaultTwitter.title
+    );
+    const twitterDescription = mergeWithDefault(
+      getMetaContent("meta[name='twitter:description']"),
+      defaultTwitter.description
+    );
+
     // Canonical
     const canonical = getLinkHref("link[rel='canonical']");
 
@@ -188,7 +225,7 @@ export function MetadataProvider({ children }: { children: React.ReactNode }) {
         siteName: ogSiteName,
       },
       twitter: {
-        card: twitterCard as "summary" | "summary_large_image" | "app" | "player",
+        card: twitterCard as 'summary' | 'summary_large_image' | 'app' | 'player',
         title: twitterTitle,
         description: twitterDescription,
       },
@@ -231,26 +268,26 @@ export function MetadataProvider({ children }: { children: React.ReactNode }) {
     };
 
     // Helper to check if string exists and is not empty
-    const isValidString = (str: string | undefined): str is string => 
+    const isValidString = (str: string | undefined): str is string =>
       typeof str === 'string' && str.length > 0;
 
     // Update basic metadata
     if (isValidString(metadata.title)) {
       document.title = metadata.title;
     }
-    
+
     if (isValidString(metadata.description)) {
       updateMeta('description', metadata.description);
     }
-    
+
     if (metadata.keywords && metadata.keywords.length > 0) {
       updateMeta('keywords', metadata.keywords.join(', '));
     }
-    
+
     if (isValidString(metadata.themeColor)) {
       updateMeta('theme-color', metadata.themeColor);
     }
-    
+
     if (isValidString(metadata.viewport)) {
       updateMeta('viewport', metadata.viewport);
     }
@@ -286,7 +323,11 @@ export function MetadataProvider({ children }: { children: React.ReactNode }) {
     }
   }, [metadata]);
 
-  return <MetadataContext.Provider value={{ metadata, setMetadata: stableSetMetadata, updateMetadata }}>{children}</MetadataContext.Provider>;
+  return (
+    <MetadataContext.Provider value={{ metadata, setMetadata: stableSetMetadata, updateMetadata }}>
+      {children}
+    </MetadataContext.Provider>
+  );
 }
 
 export function useMetadata() {

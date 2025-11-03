@@ -1,12 +1,11 @@
 import { supabase } from '@/lib/supabaseClient';
-import { type TableName } from './db';
+import { Database, Tables } from './supabase';
 
-export type data = {
-  user_id: string;
-  [key: string]: unknown;
-};
+type TableName = keyof Database['public']['Tables'];
 
-const tableConstraints = {
+const tableConstraints: {
+  [T in TableName]: (keyof Tables<T>)[];
+} = {
   sessions: ['user_id', 'date', 'start_time', 'end_time'],
   chapters: ['user_id', 'date'],
   goals: ['user_id'],
@@ -14,7 +13,11 @@ const tableConstraints = {
   settings: ['user_id'],
 };
 
-export async function upsertData(table: TableName, data: data[], hasConstraints: boolean = false) {
+export async function upsertData<Table extends TableName>(
+  table: Table,
+  data: Tables<Table>[],
+  hasConstraints: boolean = false
+) {
   if (!data[0]?.user_id) return;
 
   let constraintCols = [];

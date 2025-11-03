@@ -1,6 +1,6 @@
 import Papa, { ParseResult } from 'papaparse';
 import { upsertData } from './upsertData';
-import { TableName } from './db';
+import { TableName } from './svg';
 import { data } from './upsertData';
 import { parseDate } from './dates';
 
