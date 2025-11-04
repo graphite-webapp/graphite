@@ -1,8 +1,9 @@
 import Papa, { ParseResult } from 'papaparse';
 import { upsertData } from './upsertData';
-import { TableName } from './svg';
-import { data } from './upsertData';
 import { parseDate } from './dates';
+import { Database, Tables } from './supabase';
+
+type TableName = keyof Database['public']['Tables'];
 
 interface CsvRow {
   [key: string]: string | number | null | number[];
@@ -23,7 +24,10 @@ export const submitFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, u
       }
 
       const table: TableName = await identifyTable(results.meta.fields ?? []);
-      const data = (await equalizeFieldsToCols(userId, results.data)) as data[];
+      const data: Partial<Tables<typeof table>>[] = await equalizeFieldsToCols(
+        userId,
+        results.data
+      );
       await upsertData(table, data);
     },
   });

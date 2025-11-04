@@ -8,12 +8,12 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { useUser } from '@/lib/userContext';
-import { useFetchData } from '@/types/getData';
-import { BaseRow } from '@/types/svg';
+import { useFetchData, makeTableRequest } from '@/types/getData';
+import { Tables } from '@/types/supabase';
 import Spinner from '@/components/ui/spinner';
 
 type WordCountProps = {
-  sessions: BaseRow[];
+  sessions: Tables<'sessions'>[];
 };
 
 export default function WordCount({ sessions: initialSessions }: WordCountProps) {
@@ -27,8 +27,15 @@ export default function WordCount({ sessions: initialSessions }: WordCountProps)
     src: 'component',
     userId: currentUser?.id,
     tables: [
-      { table: 'sessions', orderBy: 'date', startPeriod: startPeriod, endPeriod: endPeriod },
-    ],
+      makeTableRequest({
+        table: 'sessions',
+        options: {
+          order: [{ column: 'date', ascending: true }],
+          gte: { date: startPeriod.toISOString().split('T')[0] },
+          lte: { date: endPeriod.toISOString().split('T')[0] },
+        },
+      }),
+    ] as const,
     initialData: {
       sessions: initialSessions,
     },

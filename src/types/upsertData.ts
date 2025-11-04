@@ -15,10 +15,10 @@ const tableConstraints: {
 
 export async function upsertData<Table extends TableName>(
   table: Table,
-  data: Tables<Table>[],
+  data: Partial<Tables<Table>>[],
   hasConstraints: boolean = false
 ) {
-  if (!data[0]?.user_id) return;
+  if (data[0]?.user_id == undefined || data[0]?.user_id == null || data[0]?.user_id == '') return;
 
   let constraintCols = [];
   if (hasConstraints) {

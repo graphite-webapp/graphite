@@ -1,20 +1,22 @@
 import { upsertData } from '@/types/upsertData';
 import { deleteData } from '@/types/deleteData';
-import { TableName } from './svg';
+import { Database, Tables } from './supabase';
 
-export type submitValue = {
-  key: string;
+type TableName = keyof Database['public']['Tables'];
+
+export type submitValue<Table extends TableName> = {
+  key: keyof Tables<Table>;
   id: string;
   type: 'number' | 'array' | 'text' | 'radio';
 };
 
-type handleSubmitParams = {
+type handleSubmitParams<Table extends TableName> = {
   userId: string;
-  table: TableName;
+  table: Table;
   submitType: 'insert' | 'update' | 'delete';
   recordId?: null | number[];
   form?: HTMLFormElement | HTMLElement | null;
-  values?: submitValue[];
+  values?: submitValue<Table>[];
 };
 
 const calculateTimeDiff = (startTime: string, endTime: string) => {
@@ -36,14 +38,14 @@ const calculateTimeDiff = (startTime: string, endTime: string) => {
   };
 };
 
-export const handleSubmit = async ({
+export const handleSubmit = async <Table extends TableName>({
   userId,
   submitType,
   table,
   recordId = null,
   form = null,
   values = [],
-}: handleSubmitParams) => {
+}: handleSubmitParams<Table>): Promise<void> => {
   if (submitType == 'delete') {
     if (recordId == null) return;
     await deleteData(table, recordId, userId);
@@ -53,75 +55,95 @@ export const handleSubmit = async ({
 
   if (!form) return;
 
-  const formData: Record<string, string | number | string[]> & { user_id: string } = {
-    user_id: userId,
-  };
-  if (recordId !== null) {
-    formData.id = recordId;
+  const formData: Partial<Tables<Table>> = {};
+
+  if ('user_id' in ({} as Tables<Table>)) {
+    (formData as Partial<{ user_id: string }> & Partial<Tables<Table>>).user_id = userId;
+  }
+
+  if (recordId !== null && recordId.length > 0 && 'id' in ({} as Tables<Table>)) {
+    (formData as Partial<{ id: number }> & Partial<Tables<Table>>).id = recordId[0];
   }
 
   let calcSessionDuration = false;
   let calcWordsWritten = false;
   let calcWpm = false;
 
-  values.forEach((value: submitValue) => {
-    if (value.key == 'session_duration') {
+  values.forEach(value => {
+    const key = value.key;
+
+    if (key == 'session_duration') {
       calcSessionDuration = true;
       return;
     }
-    if (value.key == 'words_written') {
+    if (key == 'words_written') {
       calcWordsWritten = true;
       return;
     }
-    if (value.key == 'wpm') {
+    if (key == 'wpm') {
       calcWpm = true;
       return;
     }
 
-    if (value.type == 'number') {
-      formData[value.key] = Number((form.querySelector(value.id) as HTMLInputElement).value);
+    if (value.type === 'number') {
+      setFormData(
+        formData,
+        key,
+        Number(
+          (form.querySelector(value.id) as HTMLInputElement).value
+        ) as Tables<Table>[typeof key]
+      );
       return;
     }
 
-    if (value.type == 'array') {
-      formData[value.key] = (form.querySelector(value.id) as HTMLInputElement).value.split(', ');
+    if (value.type === 'array') {
+      setFormData(
+        formData,
+        key,
+        (form.querySelector(value.id) as HTMLInputElement).value.split(
+          ', '
+        ) as Tables<Table>[typeof key]
+      );
       return;
     }
 
-    if (value.type == 'radio') {
-      formData[value.key] = (form.querySelector(value.id) as HTMLInputElement).id.replace('-', ' ');
+    if (value.type === 'radio') {
+      setFormData(
+        formData,
+        key,
+        (form.querySelector(value.id) as HTMLInputElement).id.replace(
+          '-',
+          ' '
+        ) as Tables<Table>[typeof key]
+      );
       return;
     }
 
-    formData[value.key] = (form.querySelector(value.id) as HTMLInputElement).value;
+    setFormData(
+      formData,
+      key,
+      (form.querySelector(value.id) as HTMLInputElement).value as Tables<Table>[typeof key]
+    );
   });
 
-  if (
-    calcWordsWritten &&
-    (formData.start_count !== null || formData.start_count !== undefined) &&
-    (formData.end_count !== null || formData.end_count !== undefined)
-  ) {
-    formData['words_written'] = Number(formData.end_count) - Number(formData.start_count);
-  }
+  if (table === 'sessions') {
+    const sessionData = formData as Partial<Tables<'sessions'>>;
 
-  if (
-    calcSessionDuration &&
-    (formData.start_time !== null || formData.start_time !== undefined) &&
-    (formData.end_time !== null || formData.end_time !== undefined)
-  ) {
-    const { string: sessionDurationString, mins: sessionDurationMins } = calculateTimeDiff(
-      formData.start_time as string,
-      formData.end_time as string
-    );
+    if (calcWordsWritten && sessionData.start_count != null && sessionData.end_count != null) {
+      sessionData.words_written = sessionData.end_count - sessionData.start_count;
+    }
 
-    formData['session_duration'] = sessionDurationString;
+    if (calcSessionDuration && sessionData.start_time != null && sessionData.end_time != null) {
+      const { string: sessionDurationString, mins: sessionDurationMins } = calculateTimeDiff(
+        sessionData.start_time,
+        sessionData.end_time
+      );
 
-    if (
-      calcWpm &&
-      (formData.words_written !== null || formData.words_written !== undefined) &&
-      sessionDurationMins
-    ) {
-      formData['wpm'] = Math.round(Number(formData.words_written) / sessionDurationMins);
+      sessionData.session_duration = sessionDurationString;
+
+      if (calcWpm && sessionData.words_written != null && sessionDurationMins) {
+        sessionData.wpm = Math.round(sessionData.words_written / sessionDurationMins);
+      }
     }
   }
 
@@ -129,3 +151,11 @@ export const handleSubmit = async ({
   if (form instanceof HTMLFormElement) form.reset();
   location.reload();
 };
+
+function setFormData<Table extends TableName, Key extends keyof Tables<Table>>(
+  formData: Partial<Tables<Table>>,
+  key: Key,
+  value: Tables<Table>[Key]
+) {
+  formData[key] = value;
+}

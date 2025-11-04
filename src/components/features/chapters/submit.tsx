@@ -10,7 +10,7 @@ export default function SubmitChapter() {
 
     const chapterData = {
       user_id: currentUser?.id,
-      date: new Date(),
+      date: new Date().toISOString(),
       chapter_completed: 1,
     };
 
@@ -24,7 +24,7 @@ export default function SubmitChapter() {
 
     const chapterData = {
       user_id: currentUser?.id,
-      date: new Date(),
+      date: new Date().toISOString(),
       chapter_completed: -1,
     };
 

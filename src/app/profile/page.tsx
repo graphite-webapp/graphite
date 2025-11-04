@@ -39,7 +39,12 @@ export default function ProfileSettings() {
   return (
     <main className={`${styles.container} d-flex gap-1`}>
       <section className="d-flex flex-col gap-1">
-        <Profile goals={data.goals ?? []} includeSettings={true} editingAllowed={true} />
+        <Profile
+          goals={data.goals ?? []}
+          profiles={data.profiles ?? []}
+          includeSettings={true}
+          editingAllowed={true}
+        />
       </section>
 
       <section className="d-flex flex-col gap-1">

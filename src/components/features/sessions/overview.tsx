@@ -160,7 +160,7 @@ export default function Overview({
         chapter_completed: 1,
       }));
 
-      await upsertData(dataTable, newRows);
+      await upsertData(dataTable, newRows as Tables<'chapters'>[]);
       location.reload();
       return;
     }
@@ -171,7 +171,7 @@ export default function Overview({
       date: dateVal,
     }));
 
-    await upsertData(dataTable, updatedRows);
+    await upsertData(dataTable, updatedRows as Tables<'chapters'>[]);
     location.reload();
   };
 

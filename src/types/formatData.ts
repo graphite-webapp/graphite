@@ -2,7 +2,7 @@ import { Database, Tables } from './supabase';
 
 export type AggregationRule = 'sum' | 'min' | 'max' | 'avg';
 
-type AggregationConfig<T> = Partial<Record<keyof T, AggregationRule>>;
+export type AggregationConfig<T> = Partial<Record<keyof T, AggregationRule>>;
 
 export function aggregateData<TableName extends keyof Database['public']['Tables']>(
   data: Tables<TableName>[],

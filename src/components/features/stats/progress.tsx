@@ -1,12 +1,12 @@
 import { useUser } from '@/lib/userContext';
-import { useFetchData } from '@/types/getData';
-import { BaseRow } from '@/types/svg';
+import { useFetchData, makeTableRequest } from '@/types/getData';
+import { Tables } from '@/types/supabase';
 import Spinner from '@/components/ui/spinner';
 
 type ProgressProps = {
   type: 'month' | 'year';
-  sessions: BaseRow[];
-  goals: BaseRow[];
+  sessions: Tables<'sessions'>[];
+  goals: Tables<'goals'>[];
 };
 
 export default function Progress({
@@ -31,8 +31,15 @@ export default function Progress({
     src: 'component',
     userId: currentUser?.id,
     tables: [
-      { table: 'sessions', orderBy: 'date', startPeriod: startPeriod, endPeriod: endPeriod },
-      { table: 'goals' },
+      makeTableRequest({
+        table: 'sessions',
+        options: {
+          order: [{ column: 'date', ascending: true }],
+          gte: { date: startPeriod.toISOString().split('T')[0] },
+          lte: { date: endPeriod.toISOString().split('T')[0] },
+        },
+      }),
+      makeTableRequest({ table: 'goals' }),
     ],
     initialData: { sessions: initialSessions, goals: initialGoals },
   });

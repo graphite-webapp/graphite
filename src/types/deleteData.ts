@@ -1,8 +1,14 @@
 import { supabase } from '@/lib/supabaseClient';
-import { type TableName } from './svg';
+import { Database } from './supabase';
 import { upsertData } from './upsertData';
 
-export async function deleteData(table: TableName, id: number[], userId: string) {
+type TableName = keyof Database['public']['Tables'];
+
+export async function deleteData<Table extends TableName>(
+  table: Table,
+  id: number[],
+  userId: string
+) {
   const { error } = await supabase.from(table).delete().in('id', id).eq('user_id', userId);
   if (error) {
     console.error('There was a problem signing up.', error);

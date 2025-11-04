@@ -1,6 +1,6 @@
-import { BaseRow } from '@/types/svg';
+import { Tables } from '@/types/supabase';
 import { useUser } from '@/lib/userContext';
-import { useFetchData } from '@/types/getData';
+import { useFetchData, makeTableRequest } from '@/types/getData';
 import Spinner from '@/components/ui/spinner';
 import ProfileInfo from '../../ui/profileInfo';
 import { useState, useRef } from 'react';
@@ -18,8 +18,8 @@ import Submenu from '@/components/ui/submenu';
 import { deleteAvatar } from '@/types/deleteData';
 
 type ProfileProps = {
-  goals: BaseRow[];
-  profiles: BaseRow[];
+  goals: Tables<'goals'>[];
+  profiles: Tables<'profiles'>[];
   includeSettings: boolean;
   editingAllowed: boolean;
 };
@@ -38,7 +38,7 @@ export default function Profile({
   const { data } = useFetchData({
     src: 'component',
     userId: currentUser?.id,
-    tables: [{ table: 'goals' }, { table: 'profiles' }],
+    tables: [makeTableRequest({ table: 'goals' }), makeTableRequest({ table: 'profiles' })],
     initialData: {
       goals: initialGoals,
       profiles: initialProfiles,
@@ -274,7 +274,7 @@ export default function Profile({
             <div className="d-flex justify-content-between align-items-center">
               <ProfileInfo
                 title="Monthly goal"
-                info={(goals[0].monthly as string).toLocaleString()}
+                info={goals[0].monthly !== null ? goals[0].monthly.toLocaleString() : ''}
               />
 
               <button className="btn btn-secondary has-icon d-flex flex-center">
@@ -285,7 +285,7 @@ export default function Profile({
             <div className="d-flex justify-content-between align-items-center">
               <ProfileInfo
                 title="Yearly goal"
-                info={(goals[0].yearly as string).toLocaleString()}
+                info={goals[0].yearly !== null ? goals[0].yearly.toLocaleString() : ''}
               />
 
               <button className="btn btn-secondary has-icon d-flex flex-center">

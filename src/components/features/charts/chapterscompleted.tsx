@@ -1,12 +1,12 @@
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { useUser } from '@/lib/userContext';
-import { BaseRow } from '@/types/svg';
-import { useFetchData } from '@/types/getData';
-import { DataRow, aggregateData } from '@/types/formatData';
+import { Tables } from '@/types/supabase';
+import { useFetchData, makeTableRequest } from '@/types/getData';
+import { aggregateData, AggregationConfig } from '@/types/formatData';
 import Spinner from '@/components/ui/spinner';
 
 type ChaptersCompletedProps = {
-  chapters: BaseRow[];
+  chapters: Tables<'chapters'>[];
 };
 
 export default function ChaptersCompleted({ chapters: initialChapters }: ChaptersCompletedProps) {
@@ -20,16 +20,23 @@ export default function ChaptersCompleted({ chapters: initialChapters }: Chapter
     src: 'component',
     userId: currentUser?.id,
     tables: [
-      { table: 'chapters', orderBy: 'date', startPeriod: startPeriod, endPeriod: endPeriod },
+      makeTableRequest({
+        table: 'chapters',
+        options: {
+          order: [{ column: 'date', ascending: true }],
+          gte: { date: startPeriod.toISOString().split('T')[0] },
+          lte: { date: endPeriod.toISOString().split('T')[0] },
+        },
+      }),
     ],
     initialData: {
       chapters: initialChapters,
     },
   });
 
-  const chapters = aggregateData(data.chapters as DataRow[], 'month', {
+  const chapters = aggregateData(data.chapters as Tables<'chapters'>[], 'month', {
     chapter_completed: 'sum',
-  });
+  } as AggregationConfig<Tables<'chapters'>>);
 
   if (!currentUser || userLoading) {
     return (

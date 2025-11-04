@@ -1,12 +1,12 @@
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { useUser } from '@/lib/userContext';
-import { useFetchData } from '@/types/getData';
-import { DataRow, aggregateData } from '@/types/formatData';
-import { BaseRow } from '@/types/svg';
+import { useFetchData, makeTableRequest } from '@/types/getData';
+import { aggregateData, AggregationConfig } from '@/types/formatData';
+import { Tables } from '@/types/supabase';
 import Spinner from '@/components/ui/spinner';
 
 type WordsWrittenProps = {
-  sessions: BaseRow[];
+  sessions: Tables<'sessions'>[];
 };
 
 export default function WordsWritten({ sessions: initialSessions }: WordsWrittenProps) {
@@ -20,18 +20,25 @@ export default function WordsWritten({ sessions: initialSessions }: WordsWritten
     src: 'component',
     userId: currentUser?.id,
     tables: [
-      { table: 'sessions', orderBy: 'date', startPeriod: startPeriod, endPeriod: endPeriod },
-    ],
+      makeTableRequest({
+        table: 'sessions',
+        options: {
+          order: [{ column: 'date', ascending: true }],
+          gte: { date: startPeriod.toISOString().split('T')[0] },
+          lte: { date: endPeriod.toISOString().split('T')[0] },
+        },
+      }),
+    ] as const,
     initialData: {
       sessions: initialSessions,
     },
   });
 
   const sessions =
-    data.sessions.length > 0
-      ? aggregateData(data.sessions as DataRow[], 'month', {
+    data.sessions !== undefined && data.sessions.length > 0
+      ? aggregateData(data.sessions as Tables<'sessions'>[], 'month', {
           words_written: 'sum',
-        })
+        } as AggregationConfig<Tables<'sessions'>>)
       : [];
 
   if (!currentUser || loading) {
