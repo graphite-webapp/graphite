@@ -15,7 +15,7 @@ export default function Account() {
       title="Account"
       storageKey="account"
       defaultCollapsed={true}
-      containerClasses={['d-flex', 'flex-col', 'gap-1']}
+      containerClasses={['d-flex', 'flex-col', 'gap-2']}
     >
       <div className={`d-flex flex-col gap-05`}>
         <div>

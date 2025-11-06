@@ -260,7 +260,7 @@ export default function Profile({
             />
 
             {/* GOALS */}
-            <div className="d-flex justify-content-between align-items-center">
+            {/* <div className="d-flex justify-content-between align-items-center">
               <ProfileInfo
                 title="Goal type"
                 info={`${capitalizeString(goals[0].type as string)}`}
@@ -269,7 +269,7 @@ export default function Profile({
               <button className="btn btn-secondary has-icon d-flex flex-center">
                 <span className="material-icon inline-icon">edit</span>
               </button>
-            </div>
+            </div> */}
 
             <div className="d-flex justify-content-between align-items-center">
               <ProfileInfo
