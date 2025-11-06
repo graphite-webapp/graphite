@@ -1,10 +1,10 @@
 'use client';
 import { redirect } from 'next/navigation';
-import { useUser } from '@/lib/userContext';
+import { useUser } from '@/lib/db/connection/userContext';
 import { useEffect } from 'react';
 import Settings from '@/components/features/settings/settings';
 import Spinner from '@/components/ui/spinner';
-import { useMetadata } from '@/lib/metadata';
+import { useMetadata } from '@/lib/helpers/metadata';
 
 export default function PageSettings() {
   const { currentUser, loading: userLoading } = useUser();

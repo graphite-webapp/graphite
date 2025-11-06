@@ -1,14 +1,14 @@
 'use client';
 import { redirect } from 'next/navigation';
-import { useUser } from '@/lib/userContext';
+import { useUser } from '@/lib/db/connection/userContext';
 import { useEffect } from 'react';
-import { useFetchData } from '@/types/getData';
+import { useFetchData } from '@/lib/db/getData';
 import Profile from '@/components/features/account/profile';
 import Settings from '@/components/features/settings/settings';
 import Spinner from '@/components/ui/spinner';
 import styles from '@/styles/modules/profile.module.scss';
 import UserLoading from '@/components/ui/userLoading';
-import { useMetadata } from '@/lib/metadata';
+import { useMetadata } from '@/lib/helpers/metadata';
 
 export default function ProfileSettings() {
   const { currentUser, loading: userLoading } = useUser();

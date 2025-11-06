@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabaseClient';
-import { Database, Tables } from './supabase';
+import { supabase } from '@/lib/db/connection/supabaseClient';
+import { Database, Tables } from '@/types/db/supabase';
 import { PostgrestError } from '@supabase/supabase-js';
 
 type TableQueryOptions<Table extends keyof Database['public']['Tables']> = {

@@ -1,21 +1,21 @@
-import { Tables } from '@/types/supabase';
-import { useUser } from '@/lib/userContext';
-import { useFetchData, makeTableRequest } from '@/types/getData';
+import { Tables } from '@/types/db/supabase';
+import { useUser } from '@/lib/db/connection/userContext';
+import { useFetchData, makeTableRequest } from '@/lib/db/getData';
 import Spinner from '@/components/ui/spinner';
 import ProfileInfo from '../../ui/profileInfo';
 import { useState, useRef } from 'react';
-import { capitalizeString } from '@/types/text';
+import { capitalizeString } from '@/lib/helpers/text';
 import Link from 'next/link';
 import styles from '@/styles/modules/profile.module.scss';
 import { AvatarDefault } from '@/assets/avatar_default';
 import Image from 'next/image';
-import { upsertData, upsertAvatar } from '@/types/upsertData';
-import { getAvatarSize } from '@/types/styles';
+import { upsertData, upsertAvatar } from '@/lib/db/upsertData';
+import { getAvatarSize } from '@/lib/helpers/styles';
 import React from 'react';
-import { handleSubmit } from '@/types/submitData';
-import { updateDisplayName } from '@/types/upsertData';
+import { handleSubmit } from '@/lib/db/submitData';
+import { updateDisplayName } from '@/lib/db/upsertData';
 import Submenu from '@/components/ui/submenu';
-import { deleteAvatar } from '@/types/deleteData';
+import { deleteAvatar } from '@/lib/db/deleteData';
 
 type ProfileProps = {
   goals: Tables<'goals'>[];

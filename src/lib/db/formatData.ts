@@ -1,4 +1,4 @@
-import { Database, Tables } from './supabase';
+import { Database, Tables } from '@/types/db/supabase';
 
 export type AggregationRule = 'sum' | 'min' | 'max' | 'avg';
 

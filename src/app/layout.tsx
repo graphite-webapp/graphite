@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import ClientLayout from './clientLayout';
-import { MetadataProvider } from '@/lib/metadata';
+import { MetadataProvider } from '@/lib/helpers/metadata';
 
 export const metadata: Metadata = {
   icons: [

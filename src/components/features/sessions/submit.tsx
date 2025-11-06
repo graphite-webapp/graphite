@@ -1,10 +1,10 @@
 'use client';
-import { useUser } from '@/lib/userContext';
-import { handleSubmit } from '@/types/submitData';
-import styles from '@/styles/modules/submitSession.module.scss';
+import { useUser } from '@/lib/db/connection/userContext';
+import { handleSubmit } from '@/lib/db/submitData';
+import styles from '@/styles/modules/components/features/sessions/submitSession.module.scss';
 import Spinner from '@/components/ui/spinner';
-import { useFetchData, makeTableRequest } from '@/types/getData';
-import { Tables } from '@/types/supabase';
+import { useFetchData, makeTableRequest } from '@/lib/db/getData';
+import { Tables } from '@/types/db/supabase';
 
 export default function SubmitSession() {
   const { currentUser, loading: userLoading } = useUser();

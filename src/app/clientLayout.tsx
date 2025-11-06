@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import UserProvider from '@/lib/userContext';
+import UserProvider from '@/lib/db/connection/userContext';
 import NavBar from '@/components/layout/navbar';
 import '@/styles/globals.scss';
 import GridOverlay from '@/components/layout/gridoverlay';

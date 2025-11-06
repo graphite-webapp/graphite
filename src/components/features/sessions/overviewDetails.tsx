@@ -1,8 +1,8 @@
 import React from 'react';
 import { useState, useRef } from 'react';
-import { handleSubmit, submitValue } from '@/types/submitData';
-import { Tables } from '@/types/supabase';
-import { useUser } from '@/lib/userContext';
+import { handleSubmit, submitValue } from '@/lib/db/submitData';
+import { Tables } from '@/types/db/supabase';
+import { useUser } from '@/lib/db/connection/userContext';
 import Submenu from '@/components/ui/submenu';
 import styles from '@/styles/modules/overviewDetails.module.scss';
 

@@ -1,5 +1,5 @@
-import { supabase } from '@/lib/supabaseClient';
-import { Database, Tables } from './supabase';
+import { supabase } from '@/lib/db/connection/supabaseClient';
+import { Database, Tables } from '@/types/db/supabase';
 
 type TableName = keyof Database['public']['Tables'];
 

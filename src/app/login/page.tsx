@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { FormEvent, useState, useEffect } from 'react';
-import { useUser } from '@/lib/userContext';
+import { useUser } from '@/lib/db/connection/userContext';
 import { useRouter } from 'next/navigation';
 
 export default function LogIn() {

@@ -1,5 +1,5 @@
 import SettingsCategory from '../settingsCategory';
-import { useUser } from '@/lib/userContext';
+import { useUser } from '@/lib/db/connection/userContext';
 import { redirect } from 'next/navigation';
 
 export default function Account() {

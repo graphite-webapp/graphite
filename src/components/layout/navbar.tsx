@@ -1,12 +1,12 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import styles from '@/styles/modules/navbar.module.scss';
+import styles from '@/styles/modules/components/layout/navbar.module.scss';
 import { AvatarDefault } from '@/assets/avatar_default';
-import { useFetchData } from '@/types/getData';
+import { useFetchData } from '@/lib/db/getData';
 import Image from 'next/image';
-import { useUser } from '@/lib/userContext';
-import { getAvatarSize } from '@/types/styles';
+import { useUser } from '@/lib/db/connection/userContext';
+import { getAvatarSize } from '@/lib/helpers/styles';
 
 export default function NavBar() {
   const active = usePathname();

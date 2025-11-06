@@ -1,6 +1,6 @@
 'use client';
 import { useEffect } from 'react';
-import { useMetadata } from '@/lib/metadata';
+import { useMetadata } from '@/lib/helpers/metadata';
 import SubmitSession from '@/components/features/sessions/submit';
 import SubmitChapter from '@/components/features/chapters/submit';
 import Stats from '@/app/stats/page';

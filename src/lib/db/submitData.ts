@@ -1,6 +1,6 @@
-import { upsertData } from '@/types/upsertData';
-import { deleteData } from '@/types/deleteData';
-import { Database, Tables } from './supabase';
+import { upsertData } from '@/lib/db/upsertData';
+import { deleteData } from '@/lib/db/deleteData';
+import { Database, Tables } from '@/types/db/supabase';
 
 type TableName = keyof Database['public']['Tables'];
 

@@ -1,4 +1,4 @@
-import styles from '@/styles/modules/userLoading.module.scss';
+import styles from '@/styles/modules/components/ui/userLoading.module.scss';
 
 export default function UserLoading() {
   return (

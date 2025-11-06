@@ -1,12 +1,12 @@
 'use client';
 import { redirect } from 'next/navigation';
-import { useUser } from '@/lib/userContext';
+import { useUser } from '@/lib/db/connection/userContext';
 import { useEffect } from 'react';
-import { useFetchData } from '@/types/getData';
+import { useFetchData } from '@/lib/db/getData';
 import Overview from '@/components/features/sessions/overview';
 import Spinner from '@/components/ui/spinner';
 import UserLoading from '@/components/ui/userLoading';
-import { useMetadata } from '@/lib/metadata';
+import { useMetadata } from '@/lib/helpers/metadata';
 
 export default function Sessions() {
   const { currentUser, loading: userLoading } = useUser();

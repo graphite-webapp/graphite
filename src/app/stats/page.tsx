@@ -1,15 +1,15 @@
 'use client';
 import { redirect } from 'next/navigation';
-import { useUser } from '@/lib/userContext';
+import { useUser } from '@/lib/db/connection/userContext';
 import { useEffect } from 'react';
-import { useFetchData, makeTableRequest } from '@/types/getData';
-import { useMetadata } from '@/lib/metadata';
+import { useFetchData, makeTableRequest } from '@/lib/db/getData';
+import { useMetadata } from '@/lib/helpers/metadata';
 import Glance from '@/components/features/stats/glance';
 import Progress from '@/components/features/stats/progress';
 import WordCount from '@/components/features/charts/wordcount';
 import WordsWritten from '@/components/features/charts/wordswritten';
 import ChaptersCompleted from '@/components/features/charts/chapterscompleted';
-import styles from '@/styles/modules/stats.module.scss';
+import styles from '@/styles/modules/app/stats.module.scss';
 import Spinner from '@/components/ui/spinner';
 import UserLoading from '@/components/ui/userLoading';
 

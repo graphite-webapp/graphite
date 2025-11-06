@@ -1,4 +1,4 @@
-import styles from '@/styles/modules/gridoverlay.module.scss';
+import styles from '@/styles/modules/components/layout/gridoverlay.module.scss';
 
 type GridOverlayProps = {
   show: boolean;

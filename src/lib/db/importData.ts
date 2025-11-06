@@ -1,7 +1,7 @@
 import Papa, { ParseResult } from 'papaparse';
 import { upsertData } from './upsertData';
-import { parseDate } from './dates';
-import { Database, Tables } from './supabase';
+import { parseDate } from '@/lib/helpers/dates';
+import { Database, Tables } from '@/types/db/supabase';
 
 type TableName = keyof Database['public']['Tables'];
 

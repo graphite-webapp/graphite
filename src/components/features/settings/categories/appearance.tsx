@@ -1,7 +1,7 @@
 import RadioButton from '@/components/ui/radioButton';
 import SettingsCategory from '../settingsCategory';
-import { handleSubmit } from '@/types/submitData';
-import { useUser } from '@/lib/userContext';
+import { handleSubmit } from '@/lib/db/submitData';
+import { useUser } from '@/lib/db/connection/userContext';
 
 export default function Appearance() {
   const { currentUser, settings, setSetting } = useUser();

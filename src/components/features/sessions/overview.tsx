@@ -1,15 +1,15 @@
 import { useState, useRef } from 'react';
-import { useUser } from '@/lib/userContext';
-import { useFetchData, makeTableRequest } from '@/types/getData';
-import { Tables } from '@/types/supabase';
+import { useUser } from '@/lib/db/connection/userContext';
+import { useFetchData, makeTableRequest } from '@/lib/db/getData';
+import { Tables } from '@/types/db/supabase';
 import styles from '@/styles/modules/overview.module.scss';
 import Spinner from '@/components/ui/spinner';
 import OverviewDetails from './overviewDetails';
-import { groupData } from '@/types/formatData';
-import { sumDurations } from '@/types/dates';
+import { groupData } from '@/lib/db/formatData';
+import { sumDurations } from '@/lib/helpers/dates';
 import Submenu from '@/components/ui/submenu';
-import { handleSubmit } from '@/types/submitData';
-import { upsertData } from '@/types/upsertData';
+import { handleSubmit } from '@/lib/db/submitData';
+import { upsertData } from '@/lib/db/upsertData';
 
 type OverviewProps = {
   sessions: Tables<'sessions'>[];

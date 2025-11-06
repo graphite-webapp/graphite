@@ -1,5 +1,5 @@
-import { upsertData } from '@/types/upsertData';
-import { useUser } from '@/lib/userContext';
+import { upsertData } from '@/lib/db/upsertData';
+import { useUser } from '@/lib/db/connection/userContext';
 
 export default function SubmitChapter() {
   const { currentUser } = useUser();

@@ -1,6 +1,6 @@
-import { useUser } from '@/lib/userContext';
-import { useFetchData, makeTableRequest } from '@/types/getData';
-import { Tables } from '@/types/supabase';
+import { useUser } from '@/lib/db/connection/userContext';
+import { useFetchData, makeTableRequest } from '@/lib/db/getData';
+import { Tables } from '@/types/db/supabase';
 import Spinner from '@/components/ui/spinner';
 
 type ProgressProps = {

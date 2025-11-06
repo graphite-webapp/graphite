@@ -1,8 +1,8 @@
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
-import { useUser } from '@/lib/userContext';
-import { Tables } from '@/types/supabase';
-import { useFetchData, makeTableRequest } from '@/types/getData';
-import { aggregateData, AggregationConfig } from '@/types/formatData';
+import { useUser } from '@/lib/db/connection/userContext';
+import { Tables } from '@/types/db/supabase';
+import { useFetchData, makeTableRequest } from '@/lib/db/getData';
+import { aggregateData, AggregationConfig } from '@/lib/db/formatData';
 import Spinner from '@/components/ui/spinner';
 
 type ChaptersCompletedProps = {
