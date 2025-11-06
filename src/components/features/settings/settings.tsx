@@ -3,7 +3,7 @@ import Account from './categories/account';
 import Appearance from './categories/appearance';
 import Data from './categories/data';
 import Notifications from './categories/notifications';
-import styles from '@/styles/modules/settings.module.scss';
+import styles from '@/styles/modules/components/features/settings/settings.module.scss';
 
 type SettingsProps = {
   source: string;

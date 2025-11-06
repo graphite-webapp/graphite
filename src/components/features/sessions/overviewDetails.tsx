@@ -4,7 +4,7 @@ import { handleSubmit, submitValue } from '@/lib/db/submitData';
 import { Tables } from '@/types/db/supabase';
 import { useUser } from '@/lib/db/connection/userContext';
 import Submenu from '@/components/ui/submenu';
-import styles from '@/styles/modules/overviewDetails.module.scss';
+import styles from '@/styles/modules/components/features/sessions/overviewDetails.module.scss';
 
 type OverviewDetailsProps<T extends 'sessions'> = {
   collapsed: boolean;

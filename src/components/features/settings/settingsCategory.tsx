@@ -1,5 +1,5 @@
 import SettingHeader from '@/components/ui/settingHeader';
-import styles from '@/styles/modules/settingCategory.module.scss';
+import styles from '@/styles/modules/components/features/settings/settingCategory.module.scss';
 import { useState, ReactNode } from 'react';
 
 interface SettingsCategoryProps {

@@ -1,7 +1,7 @@
 'use client';
 import { useRef, useLayoutEffect, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import styles from '@/styles/modules/submenu.module.scss';
+import styles from '@/styles/modules/components/ui/submenu.module.scss';
 
 type SubmenuOption = {
   text: string;

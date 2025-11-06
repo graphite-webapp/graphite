@@ -6,7 +6,7 @@ import { useFetchData } from '@/lib/db/getData';
 import Profile from '@/components/features/account/profile';
 import Settings from '@/components/features/settings/settings';
 import Spinner from '@/components/ui/spinner';
-import styles from '@/styles/modules/profile.module.scss';
+import styles from '@/styles/modules/components/features/account/profile.module.scss';
 import UserLoading from '@/components/ui/userLoading';
 import { useMetadata } from '@/lib/helpers/metadata';
 

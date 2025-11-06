@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useUser } from '@/lib/db/connection/userContext';
 import { useFetchData, makeTableRequest } from '@/lib/db/getData';
 import { Tables } from '@/types/db/supabase';
-import styles from '@/styles/modules/overview.module.scss';
+import styles from '@/styles/modules/components/features/sessions/overview.module.scss';
 import Spinner from '@/components/ui/spinner';
 import OverviewDetails from './overviewDetails';
 import { groupData } from '@/lib/db/formatData';

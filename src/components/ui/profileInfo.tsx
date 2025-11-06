@@ -1,4 +1,4 @@
-import styles from '@/styles/modules/profileInfo.module.scss';
+import styles from '@/styles/modules/components/ui/profileInfo.module.scss';
 
 type ProfileInfoProps = {
   title: string;

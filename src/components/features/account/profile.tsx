@@ -6,7 +6,7 @@ import ProfileInfo from '../../ui/profileInfo';
 import { useState, useRef } from 'react';
 import { capitalizeString } from '@/lib/helpers/text';
 import Link from 'next/link';
-import styles from '@/styles/modules/profile.module.scss';
+import styles from '@/styles/modules/components/features/account/profile.module.scss';
 import { AvatarDefault } from '@/assets/avatar_default';
 import Image from 'next/image';
 import { upsertData, upsertAvatar } from '@/lib/db/upsertData';

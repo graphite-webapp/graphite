@@ -1,4 +1,4 @@
-import styles from '@/styles/modules/radioButton.module.scss';
+import styles from '@/styles/modules/components/ui/radioButton.module.scss';
 
 type inputOptions = {
   type: string;

@@ -1,4 +1,4 @@
-import styles from '@/styles/modules/settingCategory.module.scss';
+import styles from '@/styles/modules/components/features/settings/settingCategory.module.scss';
 
 type SettingHeaderProps = {
   title: string;
