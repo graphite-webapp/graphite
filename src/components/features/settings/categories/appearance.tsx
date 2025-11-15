@@ -6,10 +6,14 @@ import { useUser } from '@/lib/db/connection/userContext';
 export default function Appearance() {
   const { currentUser, settings, setSetting } = useUser();
 
-  const upsertSetting = async (key: string, value: string) => {
+  const upsertSetting = async ({ key, value }) => {
     if (!currentUser) return;
 
-    if (key == 'theme') setSetting('theme', value.replace('-', ' '));
+    if (key == 'theme') {
+      setSetting('theme', value.replace('-', ' '));
+      location.reload();
+      return;
+    }
 
     const form = document.getElementById(key) as HTMLFormElement | null;
     if (!form) return;

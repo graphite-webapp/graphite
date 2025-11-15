@@ -6,7 +6,7 @@ import { useUser } from '@/lib/db/connection/userContext';
 export default function Data() {
   const { currentUser, settings, setSetting } = useUser();
 
-  const upsertSetting = async (key: string, value: string) => {
+  const upsertSetting = async ({ key, value }) => {
     if (!currentUser) return;
 
     if (key == 'data-calc') setSetting('data_calc', value.replace('-', ' '));
@@ -19,6 +19,10 @@ export default function Data() {
       form,
       values: [{ key: key.replace('-', '_'), id: '#' + value, type: 'radio' }],
     });
+  };
+
+  const importFileData = async e => {
+    console.log(e);
   };
 
   return (

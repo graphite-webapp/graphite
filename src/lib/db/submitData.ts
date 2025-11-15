@@ -56,10 +56,7 @@ export const handleSubmit = async <Table extends TableName>({
   if (!form) return;
 
   const formData: Partial<Tables<Table>> = {};
-
-  if ('user_id' in ({} as Tables<Table>)) {
-    (formData as Partial<{ user_id: string }> & Partial<Tables<Table>>).user_id = userId;
-  }
+  (formData as Partial<{ user_id: string }> & Partial<Tables<Table>>).user_id = userId;
 
   if (recordId !== null && recordId.length > 0 && 'id' in ({} as Tables<Table>)) {
     (formData as Partial<{ id: number }> & Partial<Tables<Table>>).id = recordId[0];

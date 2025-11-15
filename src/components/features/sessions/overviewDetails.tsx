@@ -36,7 +36,7 @@ export default function OverviewDetails<T extends 'sessions'>({
 
     const row = document.querySelector(`div[data-id='${sessionId}']`) as HTMLDivElement;
 
-    let editValues: submitValue[] = [
+    const editValues: submitValue<'sessions'>[] = [
       { key: 'date', id: `#date-${sessionId}`, type: 'text' },
       { key: 'start_time', id: `#start-time-${sessionId}`, type: 'text' },
       { key: 'end_time', id: `#end-time-${sessionId}`, type: 'text' },
@@ -46,11 +46,6 @@ export default function OverviewDetails<T extends 'sessions'>({
       { key: 'session_duration', id: sessionId.toString(), type: 'text' },
       { key: 'wpm', id: sessionId.toString(), type: 'number' },
       { key: 'chapter', id: `#chapter-${sessionId}`, type: 'array' },
-    ];
-
-    editValues = [
-      { key: 'date', id: `#date-${sessionId}`, type: 'text' },
-      { key: 'chapter_completed', id: `#chapter-completed-${sessionId}`, type: 'number' },
     ];
 
     await handleSubmit({
